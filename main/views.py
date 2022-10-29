@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from . forms import LoginForm
+from . forms import LoginForm, SignUpForm
 
 def index(request):
 
@@ -12,7 +12,7 @@ def index(request):
 def login_view(request):
 
     """
-    This function defindes the login view of the application.
+    This function defines the login view of the application.
     """
     
     login_form = LoginForm()
@@ -20,3 +20,14 @@ def login_view(request):
     context = {'login_form': login_form}
     
     return render(request, "login.html", context)
+
+def register_view(request):
+
+    """
+    This function defines the register view of the application.
+    """
+    signup_form = SignUpForm()
+
+    context = {'signup_form': signup_form}
+
+    return render(request, "signup.html", context)

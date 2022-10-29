@@ -14,21 +14,33 @@
     border-radius: 16px;    
 }
 
-#login-signup-form-header {
+#login-form-header {
     display: inherit;
     flex-direction: inherit;
     margin: 64px 40px 64px 40px;
 }
 
-#login-signup-form-header img{
+#login-form-header img{
     width: auto;
+}
+
+#signup-form-header {
+    display: inherit;
+    flex-direction: inherit;
+    margin: 48px 40px 48px 40px;
+}
+
+#signup-form-header span{
+    align-self: center;
+    font-weight: bold;
+    font-size: 32px;
 }
 
 #login-signup-form {
     display: inherit;
     flex-direction: inherit;
     margin: 0 40px 0 40px;
-    gap: 32px;
+    gap: 24px;
 }
 
 #login-signup-form input, #login-signup-form-footer input {
@@ -51,7 +63,7 @@
 #login-signup-form-footer {   
     display: inherit;
     flex-direction: inherit;
-    margin: 48px 40px 48px 40px;
+    margin: 40px 40px 40px 40px;
 }
 
 #login-signup-form-footer input {

@@ -8,23 +8,21 @@
 
     <div class="login-signup-form-container">
 
-        <div id="login-form-header">
-
-            <img src="{% static 'assets/wired-logo.svg' %}">
-
+        <div id="signup-form-header">
+            <span>SIGN-UP</span>
         </div>
 
         <form id="login-signup-form" method="POST">
     
             {% csrf_token %}
-            {{ login_form }}
+            {{ signup_form }}
         
         </form>
 
         <div id="login-signup-form-footer">
 
-            <input type="submit" value="Login" form="login-signup-form">
-            <span>Don't have an account <a href="{% url 'sign-up' %}">sign-up</a>.</span>
+            <input type="submit" value="Submit" form="login-signup-form">
+            <span>Already have an account <a href="{% url 'login' %}">login</a>.</span>
 
         </div>
     
