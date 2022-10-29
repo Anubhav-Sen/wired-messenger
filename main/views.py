@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from . forms import LoginForm
 
 def index(request):
 
     """
-    This is the main view of the application.
+    This function defines the main view of the application.
     """
     context = {}
     return render(request, "index.html", context)
@@ -12,7 +12,11 @@ def index(request):
 def login_view(request):
 
     """
-    This is the login view of the application.
+    This function defindes the login view of the application.
     """
-    context = {}
+    
+    login_form = LoginForm()
+
+    context = {'login_form': login_form}
+    
     return render(request, "login.html", context)

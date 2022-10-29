@@ -1,5 +1,35 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block content %}
+
+<div class="centered-grid">
+
+    <div class="login-signup-form-container">
+
+        <div id="login-signup-form-header">
+
+            <img src="{% static 'assets/wired-logo.svg' %}">
+
+        </div>
+
+        <form id="login-signup-form" method="POST">
+    
+            {% csrf_token %}
+            {{ login_form }}
+        
+        </form>
+
+        <div id="login-signup-form-footer">
+
+            <input type="submit" value="login" form="login-signup-form">
+            <span>Don't have an account <a href="">sign-up</a>.</span>
+
+        </div>
+    
+    </div>
+
+</div>
 
 {% endblock %}
