@@ -27,7 +27,7 @@
 #signup-form-header {
     display: inherit;
     flex-direction: inherit;
-    margin: 48px 40px 48px 40px;
+    margin: 48px 40px 40px 40px;
 }
 
 #signup-form-header span{
@@ -63,7 +63,7 @@
 #login-signup-form-footer {   
     display: inherit;
     flex-direction: inherit;
-    margin: 40px 40px 40px 40px;
+    margin: 20px 40px 40px 40px;
 }
 
 #login-signup-form-footer input {
@@ -88,4 +88,14 @@
     all: unset;
     font-weight: 600;
     color:#257AFD;
+}
+
+.login-signup-form-error {
+    height: 12px;
+    display: inherit;
+    flex-direction: inherit;
+    margin: 8px 40px 0px 40px;
+    font-size: 12px;
+    font-weight: 600;
+    color: tomato;
 }

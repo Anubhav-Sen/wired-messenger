@@ -21,6 +21,16 @@
         
         </form>
 
+        <div class="login-signup-form-error">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <span>{{ message }}</span>
+                {% endfor %}
+            {% endif %}
+            
+        </div>
+
         <div id="login-signup-form-footer">
 
             <input type="submit" value="Login" form="login-signup-form">
