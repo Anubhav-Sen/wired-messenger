@@ -21,9 +21,9 @@ class UserSerializer(serializers.ModelSerializer):
             ]
         extra_kwargs = {'password': {'write_only': True}}
 
-class AuthenticateUserSerializer(serializers.Serializer):
+class AuthenticationSerializer(serializers.Serializer):
     """
     This class serializes authentication fields into a JSON object.
     """
-    email_address = serializers.EmailField(max_length=255)
-    password = serializers.CharField(max_length=255)
+    email_address = serializers.EmailField(max_length=255, write_only=True, required=True)
+    password = serializers.CharField(max_length=255, write_only=True, required=True)
