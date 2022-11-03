@@ -1,18 +1,16 @@
+from genericpath import exists
 import requests
 import json
 from django.shortcuts import render, redirect
-from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
-from django.http import HttpResponseRedirect
 from . forms import LoginForm, SignUpForm
 from . custom_decorators import login_required
 
 @login_required(login_url='login')
-def index(request):
-
+def index_view(request):
     """
-    This function defined the main view of the application.
+    This function defines the main view of the application.
     """
     context = {'email_address':request.session['email_address']}
 
@@ -20,7 +18,6 @@ def index(request):
 
 @require_http_methods(['GET', 'POST'])
 def login_view(request):
-
     """
     This function defines the login view of the application. 
     It renders the login form.
@@ -30,7 +27,9 @@ def login_view(request):
     if there is an issue loging in it adds the error message to the django "messages" dictionary.
     """
     
-    login_form = LoginForm()
+    if request.session.get('token'):
+
+       return redirect('index')
 
     if request.method == 'POST':
 
@@ -42,10 +41,10 @@ def login_view(request):
             'password' : password
         }
 
-        api_request = requests.post(f'{request.scheme}://{request.get_host()}/api/authenticate-user', json=request_dict)
-        response_dict = json.loads(api_request.content)
+        api_responce = requests.post(f'{request.scheme}://{request.get_host()}/api/authenticate-user', json=request_dict)
+        response_dict = json.loads(api_responce.content)
 
-        if api_request.status_code == 200:
+        if api_responce.status_code == 200:
 
             request.session['token'] = response_dict['token']
             request.session['user_id'] = response_dict['user_id']
@@ -53,12 +52,14 @@ def login_view(request):
 
             return redirect('index')
 
-        elif api_request.status_code == 400:
+        elif api_responce.status_code == 400:
 
             for value in response_dict['errors'].values():
 
                 messages.error(request, f'*{value[0]}')
                 break
+
+    login_form = LoginForm()
 
     context = {'login_form': login_form}
     
@@ -67,7 +68,6 @@ def login_view(request):
 @require_http_methods(['GET'])
 @login_required(login_url='login')
 def logout_view(request):
-
     """
     This function defines the logout of view of the applicaion.
     It logs out user by flushing the session data and redirects to the login view.
@@ -78,7 +78,6 @@ def logout_view(request):
 
 @require_http_methods(['GET', 'POST'])
 def register_view(request):
-
     """
     This function defines the register view of the application.
     It renders the sign-up form.
@@ -107,15 +106,15 @@ def register_view(request):
         
         if confirm_password == password:
 
-            api_request = requests.post(f'{request.scheme}://{request.get_host()}/api/user/create', json=request_dict)
+            api_responce = requests.post(f'{request.scheme}://{request.get_host()}/api/user/create', json=request_dict)
 
-            if api_request.status_code == 201:
+            if api_responce.status_code == 201:
             
                 return redirect('login')
         
-            elif api_request.status_code == 400:
+            elif api_responce.status_code == 400:
 
-                errors = json.loads(api_request.content) 
+                errors = json.loads(api_responce.content) 
 
                 for value in errors['errors'].values():
 

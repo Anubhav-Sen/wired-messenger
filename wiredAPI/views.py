@@ -1,4 +1,3 @@
-import email
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -7,7 +6,6 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authtoken.views import ObtainAuthToken
 from .serializers import UserSerializer, AuthenticationSerializer
 from .models import User
 
@@ -91,7 +89,7 @@ def create_user(request):
 
         serializer.validated_data['password'] = make_password(password)
 
-        return Response({'user_data': serializer.validated_data, 'token': token}, status=status.HTTP_201_CREATED)
+        return Response({'user_data': serializer.validated_data, 'token': token.key}, status=status.HTTP_201_CREATED)
 
     else:
         return Response({'errors' : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)          
