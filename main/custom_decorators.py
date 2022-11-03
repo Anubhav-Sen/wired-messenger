@@ -1,6 +1,5 @@
 
 from django.http import HttpResponseRedirect
-from functools import wraps
 
 def login_required(login_url=None):
     """
@@ -9,9 +8,9 @@ def login_required(login_url=None):
     def decorator(function):
         def wrapper(request, *args, **kwargs):
 
-            token = request.session.get('token')  
+            token_key = request.session.get('token-key')  
 
-            if not token:
+            if not token_key:
 
                 return HttpResponseRedirect(login_url)
 

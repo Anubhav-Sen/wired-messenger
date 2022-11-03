@@ -1,96 +1,7 @@
-import json as json_module
-import requests
 from unittest import mock
 from django.test import TestCase, Client
-from django.urls import reverse, resolve
-from main.views import login_view, register_view, logout_view, index_view
-
-def mocked_requests_post_login_view(url, json=None):
-    """
-    This function is a mock for the wired API user authentication endpoint.
-    It mimmics the authentication behaviour of the api enpoint using dummy data.
-    """
-    class MockResponse:
-        """
-        This class defines the mock responce object.
-        """
-        def __init__(self, json_data, status_code):
-            self.content = json_data
-            self.status_code = status_code
-
-        def content(self):
-            return self.content
-
-        def status_code(self):
-            return self.status_code
-
-    if json['email_address'] == 'test@test.com' and json['password'] == 'test':
-        
-        responce_dict = {
-            'token':'test-token',
-            'user_id': 1,
-            'email_address': 'test@test.com'
-        }
-       
-        json_data = json_module.dumps(responce_dict).encode('utf-8')
-
-        return MockResponse(json_data, 200)
-
-    else:
-        
-        responce_dict = {
-            'errors':{'dummy-error':'dummy error message'},
-        }
-
-        json_data = json_module.dumps(responce_dict).encode('utf-8')
-
-        return MockResponse(json_data, 400)
-
-def mocked_requests_post_register_view(url, json=None):
-    """
-    This function is a mock for the wired API create user endpoint.
-    It mimmics the behaviours of the create user enpoint using dummy data to check if the email is unique.
-    """
-    class MockResponse:
-        """
-        This class defines the mock responce object.
-        """
-        def __init__(self, json_data, status_code):
-            self.content = json_data
-            self.status_code = status_code
-
-        def content(self):
-            return self.content
-
-        def status_code(self):
-            return self.status_code
-
-    if json['email_address'] != 'unique-email@test.com' and json['user_name'] != 'unique-user':
-        
-        responce_dict = {
-            'user_data':{
-                'first_name':'test', 
-                'last_name':'test', 
-                'user_name':'test', 
-                'email_address':'test@test.com',
-                'password': 'hashed-password'
-                },
-            'token': 'test-token'
-            }
-       
-        json_data = json_module.dumps(responce_dict).encode('utf-8')
-
-        return MockResponse(json_data, 201)
-
-    else:
-        
-        responce_dict = {
-            'errors':{'dummy-error':'dummy error message'},
-        }
-
-        json_data = json_module.dumps(responce_dict).encode('utf-8')
-
-        return MockResponse(json_data, 400)
+from django.urls import reverse
+from main.mocks.mocked_api import mocked_requests_post_login_view, mocked_requests_post_register_view
 
 class TestLoginViewWhileLoggedOut(TestCase):
     """
@@ -147,12 +58,11 @@ class TestLoginViewWhileLoggedIn(TestCase):
         """
         self.client = Client()
         self.url = reverse('login')
-
-        session = self.client.session
-        session['token'] = 'test-token'
-        session['user_id'] = 1
-        session['email_address'] = 'test@test.com'
-        session.save()
+        self.session = self.client.session
+        self.session['token-key'] = 'test-token'
+        self.session['user_id'] = 1
+        self.session['email_address'] = 'test@test.com'
+        self.session.save()
         
     def test_login_view_GET(self):
         """
@@ -226,12 +136,11 @@ class TestLogoutView(TestCase):
         """
         self.client = Client()
         self.url = reverse('logout')
-
-        session = self.client.session
-        session['token'] = 'test-token'
-        session['user_id'] = 1
-        session['email_address'] = 'test@test.com'
-        session.save()
+        self.session = self.client.session
+        self.session['token-key'] = 'test-token'
+        self.session['user_id'] = 1
+        self.session['email_address'] = 'test@test.com'
+        self.session.save()
         
     def test_login_view_GET(self):
         """
@@ -273,12 +182,11 @@ class TestIndexViewWhileLoggedIn(TestCase):
         """
         self.client = Client()
         self.url = reverse('index')
-        
-        session = self.client.session
-        session['token'] = 'test-token'
-        session['user_id'] = 1
-        session['email_address'] = 'test@test.com'
-        session.save()
+        self.session = self.client.session
+        self.session['token-key'] = 'test-token'
+        self.session['user_id'] = 1
+        self.session['email_address'] = 'test@test.com'
+        self.session.save()
 
     def test_index_view_GET(self):
         """

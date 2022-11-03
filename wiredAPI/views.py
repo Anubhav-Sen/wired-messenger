@@ -30,7 +30,7 @@ def authenticate_user(request):
             
             token, created = Token.objects.get_or_create(user=user)
 
-            return Response({'token': token.key, 'user_id':user.user_id,'email_address': user.email_address}, status=status.HTTP_200_OK)
+            return Response({'token-key': token.key, 'user_id':user.user_id,'email_address': user.email_address}, status=status.HTTP_200_OK)
 
         else:
 
@@ -89,7 +89,7 @@ def create_user(request):
 
         serializer.validated_data['password'] = make_password(password)
 
-        return Response({'user_data': serializer.validated_data, 'token': token.key}, status=status.HTTP_201_CREATED)
+        return Response({'user_data': serializer.validated_data, 'token-key': token.key}, status=status.HTTP_201_CREATED)
 
     else:
         return Response({'errors' : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)          

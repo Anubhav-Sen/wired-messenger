@@ -27,7 +27,7 @@ def login_view(request):
     if there is an issue loging in it adds the error message to the django "messages" dictionary.
     """
     
-    if request.session.get('token'):
+    if request.session.get('token-key'):
 
        return redirect('index')
 
@@ -46,7 +46,7 @@ def login_view(request):
 
         if api_responce.status_code == 200:
 
-            request.session['token'] = response_dict['token']
+            request.session['token-key'] = response_dict['token-key']
             request.session['user_id'] = response_dict['user_id']
             request.session['email_address'] = response_dict['email_address']
 

@@ -6,7 +6,6 @@ class TestUrls(SimpleTestCase):
     """
     This class tests if views are bound to urls correctly.
     """
-
     def test_login_url(self):
         
         url = reverse('login')
