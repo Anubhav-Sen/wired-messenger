@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model, authenticate
-from django.contrib.auth.hashers import make_password
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -84,10 +83,17 @@ def create_user(request):
 
     if serializer.is_valid():
         
-        user = get_user_model().objects.create_user(first_name = first_name, last_name = last_name, user_name = user_name, email_address = email_address, password = password)
+        user = get_user_model().objects.create_user(
+            first_name = first_name, 
+            last_name = last_name, 
+            user_name = user_name, 
+            email_address = email_address, 
+            password = password
+            )
+            
         token = Token.objects.create(user=user) 
 
-        serializer.validated_data['password'] = make_password(password)
+        serializer.validated_data['password'] = user.password
 
         return Response({'user_data': serializer.validated_data, 'token-key': token.key}, status=status.HTTP_201_CREATED)
 
