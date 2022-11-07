@@ -60,8 +60,17 @@ class TestLoginViewWhileLoggedIn(TestCase):
         self.url = reverse('login')
         self.session = self.client.session
         self.session['token-key'] = 'test-token'
-        self.session['user_id'] = 1
-        self.session['email_address'] = 'test@test.com'
+
+        self.session['user-data'] = {
+            'first_name':'test', 
+            'last_name':'test', 
+            'user_name':'test', 
+            'email_address':'test@test.com',
+            'password': 'hashed-password',
+            'bio': 'this is a bio',
+            'display_pic': None
+        }
+
         self.session.save()
         
     def test_login_view_GET(self):
@@ -120,6 +129,18 @@ class TestRegisterView(TestCase):
             'confirm_password':'test'
             }
 
+        expected_responce_dict = {
+            'user-data':{
+                'first_name':'test', 
+                'last_name':'test', 
+                'user_name':'test', 
+                'email_address':'test@test.com',
+                'bio': 'this is a bio',
+                'display_pic': None
+                },
+            'token-key': 'test-token'
+            }
+
         invalid_data_response = self.client.post(self.url, data=invalid_request_dict)
         valid_data_response = self.client.post(self.url, data=valid_request_dict)
         
@@ -138,8 +159,16 @@ class TestLogoutView(TestCase):
         self.url = reverse('logout')
         self.session = self.client.session
         self.session['token-key'] = 'test-token'
-        self.session['user_id'] = 1
-        self.session['email_address'] = 'test@test.com'
+
+        self.session['user-data'] = {
+            'first_name':'test', 
+            'last_name':'test', 
+            'user_name':'test', 
+            'email_address':'test@test.com',
+            'bio': 'this is a bio',
+            'display_pic': None
+        }
+
         self.session.save()
         
     def test_login_view_GET(self):
@@ -184,8 +213,17 @@ class TestIndexViewWhileLoggedIn(TestCase):
         self.url = reverse('index')
         self.session = self.client.session
         self.session['token-key'] = 'test-token'
-        self.session['user_id'] = 1
-        self.session['email_address'] = 'test@test.com'
+
+        self.session['user-data'] = {
+            'first_name':'test', 
+            'last_name':'test', 
+            'user_name':'test', 
+            'email_address':'test@test.com',
+            'password': 'hashed-password',
+            'bio': 'this is a bio',
+            'display_pic': None
+        }
+
         self.session.save()
 
     def test_index_view_GET(self):

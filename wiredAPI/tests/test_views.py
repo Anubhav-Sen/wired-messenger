@@ -60,10 +60,16 @@ class TestAunthenticateUserView(TestCase):
         incorrect_data_response = self.client.post(self.url, data=incorrect_request_dict)
 
         valid_expected_response_dict = {
+            'user-data': {
+                'first_name': self.user.first_name, 
+                'last_name': self.user.last_name, 
+                'user_name':self.user.user_name, 
+                'email_address': self.user.email_address,
+                'bio': self.user.bio,
+                'display_pic': self.user.display_pic or None
+            },
             'token-key':self.token.key, 
-            'user_id': self.user.user_id, 
-            'email_address':self.user.email_address,
-            }
+        }
 
         invalid_expected_response_dict = {
             'errors':invalid_request_serializer.errors, 
@@ -117,7 +123,7 @@ class TestCreateUserView(TestCase):
             'email_address': 'not an email',
             'password': 'password' 
         }
-      
+
         valid_request_serializer = UserSerializer(data = valid_request_dict)
         valid_request_serializer.is_valid()
 
@@ -127,15 +133,17 @@ class TestCreateUserView(TestCase):
         valid_data_response = self.client.post(self.url, data=valid_request_dict)
         invalid_data_response = self.client.post(self.url, data=invalid_request_dict)
 
-        user = get_user_model().objects.filter(email_address = 'test@test.com').first()
-        token = Token.objects.get(user = user)
-
-        valid_request_serializer.validated_data['password'] = user.password
-
-        valid_expected_response_dict = { 
-            'user_data': valid_request_serializer.validated_data, 
-            'token-key': token.key,
-            }
+        valid_expected_response_dict = {
+            'user-data': {
+                'first_name': self.user.first_name, 
+                'last_name': self.user.last_name, 
+                'user_name':self.user.user_name, 
+                'email_address': self.user.email_address,
+                'bio': self.user.bio,
+                'display_pic': self.user.display_pic or None
+            },
+            'token-key':self.token.key, 
+        }
 
         invalid_expected_response_dict = {
             'errors': invalid_request_serializer.errors, 
@@ -143,5 +151,5 @@ class TestCreateUserView(TestCase):
 
         self.assertEquals(valid_data_response.status_code, 201)
         self.assertEquals(invalid_data_response.status_code, 400)
-        self.assertDictEqual(valid_data_response.data, valid_expected_response_dict)       
+        self.assertDictEqual(valid_data_response.data, valid_expected_response_dict)    
         self.assertDictEqual(invalid_data_response.data, invalid_expected_response_dict)  

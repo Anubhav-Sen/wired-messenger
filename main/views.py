@@ -12,7 +12,7 @@ def index_view(request):
     """
     This function defines the main view of the application.
     """
-    context = {'email_address':request.session['email_address']}
+    context = {'email_address':request.session['user-data']['email_address']}
 
     return render(request, "index.html", context)
 
@@ -47,8 +47,7 @@ def login_view(request):
         if api_responce.status_code == 200:
 
             request.session['token-key'] = response_dict['token-key']
-            request.session['user_id'] = response_dict['user_id']
-            request.session['email_address'] = response_dict['email_address']
+            request.session['user-data'] = response_dict['user-data']
 
             return redirect('index')
 

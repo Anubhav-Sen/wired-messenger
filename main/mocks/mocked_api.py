@@ -22,10 +22,16 @@ def mocked_requests_post_login_view(url, json=None):
     if json['email_address'] == 'test@test.com' and json['password'] == 'test':
         
         responce_dict = {
-            'token-key':'test-token',
-            'user_id': 1,
-            'email_address': 'test@test.com'
-        }
+            'user-data':{
+                'first_name':'test', 
+                'last_name':'test', 
+                'user_name':'test', 
+                'email_address':'test@test.com',
+                'bio': 'this is a bio',
+                'display_pic': None
+                },
+            'token-key': 'test-token'
+            }
        
         json_data = json_module.dumps(responce_dict).encode('utf-8')
 
@@ -61,20 +67,21 @@ def mocked_requests_post_register_view(url, json=None):
             return self.status_code
 
     if json['email_address'] != 'unique-email@test.com' and json['user_name'] != 'unique-user':
-        
+
         responce_dict = {
-            'user_data':{
+            'user-data':{
                 'first_name':'test', 
                 'last_name':'test', 
                 'user_name':'test', 
                 'email_address':'test@test.com',
-                'password': 'hashed-password'
+                'bio': 'this is a bio',
+                'display_pic': None
                 },
             'token-key': 'test-token'
-            }
-       
-        json_data = json_module.dumps(responce_dict).encode('utf-8')
+        }
 
+        json_data = json_module.dumps(responce_dict).encode('utf-8')
+        
         return MockResponse(json_data, 201)
 
     else:
