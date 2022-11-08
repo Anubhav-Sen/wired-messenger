@@ -6,7 +6,7 @@
 
 <div class="centered-grid">
 
-    <div class="login-signup-form-container">
+    <div class="single-page-form-container">
 
         <div id="login-form-header">
 
@@ -14,14 +14,14 @@
 
         </div>
 
-        <form id="login-signup-form" method="POST">
+        <form id="login-form" class="single-page-form" method="POST">
     
             {% csrf_token %}
             {{ login_form }}
         
         </form>
 
-        <div class="login-signup-form-error">
+        <div class="single-page-form-error">
 
             {% if messages %}
                 {% for message in messages %}
@@ -31,9 +31,9 @@
             
         </div>
 
-        <div id="login-signup-form-footer">
+        <div class="single-page-form-footer">
 
-            <input type="submit" value="Login" form="login-signup-form">
+            <input type="submit" value="Login" form="login-form">
             <span>Don't have an account <a href="{% url 'sign-up' %}">sign-up</a>.</span>
 
         </div>

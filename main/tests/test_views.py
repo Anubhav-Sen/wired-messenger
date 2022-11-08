@@ -102,7 +102,7 @@ class TestRegisterView(TestCase):
         response = self.client.get(self.url)
 
         self.assertEquals(response.status_code, 200)
-        self.assertTemplateUsed('signup.html')
+        self.assertTemplateUsed(response, 'signup.html')
     
     @mock.patch('main.views.requests.post', side_effect=mocked_requests_post_register_view)
     def test_register_view_POST(self, mockec_post):
@@ -230,9 +230,20 @@ class TestIndexViewWhileLoggedIn(TestCase):
         """
         This function tests the get method of the index view.
         It asserts if the connection to the index view is successful.
+        It asserts if the connection to the index view is successful when the partial template header profile side area is in the request.
+        It asserts if the connection to the index view is successful when the partial template header chat list side area is in the request.
         It asserts if the index view uses the "index.html" template. 
+        It asserts if the index view uses the "index.html" template when the profile side area is in the request header values.
+        It asserts if the index view uses the "index.html" template when the chat list side area is in the request header values.
         """
+        
         response = self.client.get(self.url)
-
+        partial_template_profile_response = self.client.get(self.url, **{'HTTP_Partial-Template':'profile-side-area'})
+        partial_template_chat_list_response = self.client.get(self.url, **{'HTTP_Partial-Template':'chat-list-side-area'})
+        
         self.assertEquals(response.status_code, 200)
-        self.assertTemplateUsed('index')
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'index.html')
+        self.assertTemplateUsed(partial_template_profile_response, 'profile.html')
+        self.assertTemplateUsed(partial_template_chat_list_response, 'chat-list.html')

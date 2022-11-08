@@ -4,10 +4,11 @@ import json
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
-from . forms import LoginForm, SignUpForm
+from . forms import LoginForm, SignUpForm, EditProfileForm
 from . custom_decorators import login_required
 
 @login_required(login_url='login')
+@require_http_methods(['GET', 'POST'])
 def index_view(request):
     """
     This function defines the main view of the application.
@@ -21,11 +22,12 @@ def index_view(request):
         
         return render(request, "profile.html", context)
     
-    if request.method == 'GET' and request.headers.get('Partial-Template') == 'chat-list-side-area':
+    elif request.method == 'GET' and request.headers.get('Partial-Template') == 'chat-list-side-area':
         
         return render(request, "chat-list.html", context)
 
-    return render(request, "index.html", context)
+    else:
+        return render(request, "index.html", context)
 
 @require_http_methods(['GET', 'POST'])
 def login_view(request):
@@ -137,4 +139,16 @@ def register_view(request):
         
     context = {'signup_form': signup_form}
 
-    return render(request, "signup.html", context)
+    return render(request, 'signup.html', context)
+
+@login_required(login_url='login')
+@require_http_methods(['GET', 'POST'])
+def edit_profile_view(request):
+    """
+    This function defines the edit profile view of the application.
+    """
+    edit_profile_form = EditProfileForm()
+
+    context = {'edit_profile_form': edit_profile_form}
+
+    return render(request, 'edit-profile.html', context)

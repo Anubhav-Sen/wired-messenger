@@ -1,19 +1,23 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block content %}
 
 <div class="centered-grid">
 
     <div class="single-page-form-container">
 
-        <div id="signup-form-header">
-            <span>SIGN-UP</span>
+        <div id="login-form-header">
+
+            <img src="{% static 'assets/wired-logo.svg' %}">
+
         </div>
 
-        <form id="signup-form" class="single-page-form" method="POST">
+        <form id="login-form" class="single-page-form" method="POST">
     
             {% csrf_token %}
-            {{ signup_form }}
+            {{ edit_profile_form }}
         
         </form>
 
@@ -29,8 +33,8 @@
 
         <div class="single-page-form-footer">
 
-            <input type="submit" value="Submit" form="signup-form">
-            <span>Already have an account <a href="{% url 'login' %}">login</a>.</span>
+            <input type="submit" value="Login" form="login-form">
+            <span>Don't have an account <a href="{% url 'sign-up' %}">sign-up</a>.</span>
 
         </div>
     

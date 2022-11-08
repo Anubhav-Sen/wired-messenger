@@ -13,7 +13,7 @@ class LoginForm(forms.Form):
 class SignUpForm(forms.Form):
 
     """
-    This class defines all of the fields of the login form.
+    This class defines all of the fields of the sign-up form.
     """
 
     first_name = forms.CharField(label='', max_length=50, widget=forms.TextInput(attrs={'placeholder': 'First Name'}))
@@ -22,4 +22,14 @@ class SignUpForm(forms.Form):
     email_address = forms.EmailField(label='', max_length=255, widget=forms.TextInput(attrs={'placeholder': 'Email Address'}))
     password = forms.CharField(label='', max_length=255, widget=forms.PasswordInput(attrs={'placeholder': 'Password'}))
     confirm_password = forms.CharField(label='', max_length=255, widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password'}))
- 
+
+class EditProfileForm(forms.Form):
+
+    """
+    This class defines all of the fields of the edit-profile form.
+    """
+    display_pic = forms.ImageField(label= '#') 
+    user_name = forms.CharField(label='', max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Username'}))
+    bio = forms.CharField(label='', max_length = 500, widget=forms.TextInput(attrs={'placeholder': 'Bio'}) )
+    password = forms.CharField(label='', max_length=255, widget=forms.PasswordInput(attrs={'placeholder': 'Password'}))
+    confirm_password = forms.CharField(label='', max_length=255, widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password'})) 

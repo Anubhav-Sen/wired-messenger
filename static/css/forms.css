@@ -1,4 +1,4 @@
-.login-signup-form-container {
+.single-page-form-container {
     width: 360px;
     display: flex;
     flex-direction: column;
@@ -30,14 +30,14 @@
     font-size: 32px;
 }
 
-#login-signup-form {
+.single-page-form {
     display: inherit;
     flex-direction: inherit;
     margin: 0 40px 0 40px;
     gap: 24px;
 }
 
-#login-signup-form input, #login-signup-form-footer input {
+.single-page-form input, .single-page-form-footer input {
     height: 40px;
     width: auto;
     font-family: 'IBM Plex Mono', monospace;
@@ -46,45 +46,45 @@
     border: none;
 }
 
-#login-signup-form input {
+.single-page-form input {
     border-bottom: 2px solid#28282B ;
 }
 
-#login-signup-form input:focus {
+.single-page-form input:focus {
     border-bottom: 2px solid #257AFD ;
 }
 
-#login-signup-form-footer {   
+.single-page-form-footer {   
     display: inherit;
     flex-direction: inherit;
-    margin: 20px 40px 40px 40px;
+    margin: 0 40px 40px 40px;
 }
 
-#login-signup-form-footer input {
+.single-page-form-footer input {
     height: 48px;
     border-radius: 24px;
     color:white;
     background-color: #28282B;
 }
 
-#login-signup-form-footer input:active {
+.single-page-form-footer input:active {
     background-color: #38383B;
 }
 
-#login-signup-form-footer span {
+.single-page-form-footer span {
     font-size: 14px;
     font-weight: 500;
     align-self: center;
     margin-top: 16px;
 }
 
-#login-signup-form-footer a {
+.single-page-form-footer a {
     all: unset;
     font-weight: 600;
     color:#257AFD;
 }
 
-.login-signup-form-error {
+.single-page-form-error {
     height: 24px;
     display: inherit;
     flex-direction: inherit;

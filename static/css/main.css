@@ -1,4 +1,19 @@
-#side-area-header{
+#main-grid {
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    gap: 1px;
+    grid-template-rows: 64px calc(100vh - 65px);
+    grid-template-columns: 360px calc(100vw - 361px);
+    grid-template-areas: "side-area-header chat-area-header" "side-area chat-area"; 
+    background-color: #d3d3d3;
+}
+
+#main-grid > * {
+    background-color: white;
+}
+
+#side-area-header {
     height: 100%;
     width: 100%;
     grid-area: side-area-header;
@@ -9,20 +24,16 @@
     padding: 0 16px 0 16px;
 }
 
-#profile-back-btn {
-    height: 32px;
-    width: 32px;
-    border: none;
-    border-radius: 16px;
-    background-color: white;
-    background-image: url(../assets/back-icon.svg);
-    background-repeat: no-repeat;
-    background-position: center;
-    cursor: pointer;
+#user-actions-btn-dropdown-container {
+    margin-left: auto;
 }
 
-#profile-back-btn:active {
-    background-color: #f4f4f4;
+#side-area-header .display-pic-placeholder {
+    cursor: default;
+}
+
+#profile-back-btn {
+    background-image: url(../assets/back-icon.svg);
 }
 
 #chat-list-side-area {
@@ -120,20 +131,4 @@
 #profile-information span:nth-of-type(3){
     font-size: 14px;
     margin-top: 16px;
-}
-
-#profile-side-area button {
-    height: 40px;
-    width: 100%;
-    color: white;
-    font-family: 'IBM Plex Mono', monospace;
-    font-weight: 700;
-    border: none;
-    border-radius: 20px;
-    background-color: #28282B;
-    cursor: pointer;
-}
-
-#profile-side-area button:active {
-    background-color: #38383B;
 }

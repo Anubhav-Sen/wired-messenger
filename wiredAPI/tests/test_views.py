@@ -133,16 +133,19 @@ class TestCreateUserView(TestCase):
         valid_data_response = self.client.post(self.url, data=valid_request_dict)
         invalid_data_response = self.client.post(self.url, data=invalid_request_dict)
 
+        user = get_user_model().objects.get(email_address = 'test@test.com')
+        token = Token.objects.get(user = user)
+
         valid_expected_response_dict = {
             'user-data': {
-                'first_name': self.user.first_name, 
-                'last_name': self.user.last_name, 
-                'user_name':self.user.user_name, 
-                'email_address': self.user.email_address,
-                'bio': self.user.bio,
-                'display_pic': self.user.display_pic or None
+                'first_name': user.first_name , 
+                'last_name': user.last_name, 
+                'user_name': user.user_name, 
+                'email_address': user.email_address,
+                'bio': user.bio,
+                'display_pic': user.display_pic or None
             },
-            'token-key':self.token.key, 
+            'token-key': token.key, 
         }
 
         invalid_expected_response_dict = {
