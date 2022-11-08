@@ -11,15 +11,26 @@ from . custom_decorators import login_required
 def index_view(request):
     """
     This function defines the main view of the application.
+    It renders the "index.html" template.
+    It also returns rendered partial templates.
     """
-    context = {'email_address':request.session['user-data']['email_address']}
+
+    context = {'user_data':request.session['user-data']}
+
+    if request.method == 'GET' and request.headers.get('Partial-Template') == 'profile-side-area':
+        
+        return render(request, "profile.html", context)
+    
+    if request.method == 'GET' and request.headers.get('Partial-Template') == 'chat-list-side-area':
+        
+        return render(request, "chat-list.html", context)
 
     return render(request, "index.html", context)
 
 @require_http_methods(['GET', 'POST'])
 def login_view(request):
     """
-    This function defines the login view of the application. 
+    This function defines the login view of the application.
     It renders the login form.
     It makes an api request to authenicate the user.
     It logs in the user by adding the data recieved from the api call to the session dictionary.
