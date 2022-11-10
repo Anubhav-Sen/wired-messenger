@@ -124,7 +124,7 @@ class User(AbstractBaseUser):
     user_name = models.CharField(max_length=50, unique=True)
     email_address = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
-    bio = models.CharField(max_length=500, null=True, blank=True, default='no bio')
+    bio = models.CharField(max_length=500, null=True, blank=True)
     display_pic = models.ImageField(upload_to=user_profile_directory_path, null=True, blank=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)

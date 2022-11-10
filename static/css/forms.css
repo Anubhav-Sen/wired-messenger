@@ -4,8 +4,9 @@
     flex-direction: column;
     align-items: stretch;
     border: 2px solid #28282B;
-    border-radius: 16px;   
-    margin  : 20px 0 20px 0;
+    border-radius: 16px;
+    background-color: white;
+    margin: 20px 0 20px 0;
 }
 
 #login-form-header {
@@ -30,6 +31,12 @@
     font-size: 32px;
 }
 
+#edit-profile-form-header {
+    display: inherit;
+    flex-direction: inherit;
+    margin: 32px 40px 32px 40px;
+}
+
 .single-page-form {
     display: inherit;
     flex-direction: inherit;
@@ -37,7 +44,7 @@
     gap: 24px;
 }
 
-.single-page-form input, .single-page-form-footer input {
+.single-page-form input, .single-page-form textarea, .single-page-form-footer input {
     height: 40px;
     width: auto;
     font-family: 'IBM Plex Mono', monospace;
@@ -46,12 +53,41 @@
     border: none;
 }
 
-.single-page-form input {
+.single-page-form input, .single-page-form textarea {
     border-bottom: 2px solid#28282B ;
 }
 
-.single-page-form input:focus {
+.single-page-form input:focus, .single-page-form textarea:focus {
     border-bottom: 2px solid #257AFD ;
+}
+
+.single-page-form label[for="display-pic-input"] {
+    display: inherit;
+    flex-direction: inherit;
+    align-items: center;
+    position: relative;
+}
+
+#edit-display-pic-overlay {
+    height: 104px;
+    width: 104px;
+    display: grid;
+    place-items: center;
+    position: absolute;
+    border-radius: 50%;   
+    flex-shrink: 0;
+}
+
+#edit-display-pic-overlay:hover {
+    background-image: url(../assets/camera-icon-white.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 24px auto;
+    background-color: rgba(58, 59, 60, 0.5);
+}
+
+.single-page-form textarea {
+    resize: vertical;
 }
 
 .single-page-form-footer {   

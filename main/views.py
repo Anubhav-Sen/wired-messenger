@@ -149,6 +149,9 @@ def edit_profile_view(request):
     """
     edit_profile_form = EditProfileForm()
 
-    context = {'edit_profile_form': edit_profile_form}
+    context = {
+        'user_data':request.session['user-data'],
+        'edit_profile_form': edit_profile_form
+        }
 
     return render(request, 'edit-profile.html', context)

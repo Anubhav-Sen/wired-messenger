@@ -1,6 +1,6 @@
 <div id="side-area-header">
 
-    <button id="profile-back-btn" class="round-btn"></button>
+    <button id="profile-back-btn" class="round-btn"><i class="back-icon"></i></button>
 
 </div>
 
@@ -9,9 +9,17 @@
     <div class="display-pic-placeholder-large"><span>{{user_data.user_name.0 | upper}}</span></div>
 
     <div id="profile-information">
+
         <span>{{user_data.user_name}}</span>
+
         <span>{{user_data.email_address}}</span>
-        <span>{{user_data.bio}}</span>
+
+        {% if user_data.bio %}
+            <span>{{user_data.bio}}</span>
+        {% else %}
+            <span>No bio</span>
+        {% endif %}
+        
     </div>
 
 </div>

@@ -1,6 +1,8 @@
 body {
     margin: 0;
+    color: #28282B;
     font-family: 'IBM Plex Mono', monospace;
+    overflow: hidden;
 }
 
 .round-btn {      
@@ -65,7 +67,7 @@ body {
 }
 
 .hide {
-    display: none;
+    display: none !important;
 }
 
 ::-webkit-scrollbar {
@@ -74,8 +76,9 @@ body {
 
 ::-webkit-scrollbar-thumb {
     background-color: #d3d3d3;
-    border: 2px solid white;
-    border-radius: 10px;
+    background-clip: padding-box;
+    border: 2px solid rgba(0, 0, 0, 0);
+    border-radius: 10px; 
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -88,6 +91,20 @@ body {
     display: grid;
     place-items: center;
     overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.overlay {
+    top: 0;
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    place-items: center;
+    z-index: 2;
+    position: absolute;
+    background-color: rgba(40, 40, 43, 0.5);
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .display-pic-placeholder {
@@ -104,14 +121,23 @@ body {
 }
 
 .display-pic-placeholder-large {
-    height: 80px;
-    width: 80px;
+    height: 104px;
+    width: 104px;
     display: grid;
     place-items: center;
     color: white;
     font-size: 40px;
     font-weight: 600;
     background-color: #28282B;
+    border-radius: 50%;  
+    cursor: default; 
+    flex-shrink: 0;
+}
+
+.display-pic-img-large {
+    height: 104px;
+    width: 104px;
+    display: block;;
     border-radius: 50%;  
     cursor: default; 
     flex-shrink: 0;
@@ -142,6 +168,26 @@ body {
     width: 16px;
     display: block;
     background-image: url(../assets/profile-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.back-icon {
+    height: 100%;
+    width: 100%;
+    display: block;
+    background-image: url(../assets/back-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.check-icon {
+    height: 16px;
+    width: 16px;
+    display: block;
+    background-image: url(../assets/check-icon.svg);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
