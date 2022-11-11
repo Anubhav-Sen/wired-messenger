@@ -1,10 +1,9 @@
-from genericpath import exists
 import requests
 import json
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
-from . forms import LoginForm, SignUpForm, EditProfileForm
+from . forms import LoginForm, SignUpForm, EditProfileForm, ChangePasswordForm
 from . custom_decorators import login_required
 
 @login_required(login_url='login')
@@ -45,7 +44,7 @@ def login_view(request):
        return redirect('index')
 
     if request.method == 'POST':
-
+        
         email_address = request.POST.get('email_address')
         password = request.POST.get('password')
 
@@ -68,7 +67,7 @@ def login_view(request):
 
             for value in response_dict['errors'].values():
 
-                messages.error(request, f'*{value[0]}')
+                messages.error(request, '*' + str(value[0]))
                 break
 
     login_form = LoginForm()
@@ -77,8 +76,9 @@ def login_view(request):
     
     return render(request, "login.html", context)
 
-@require_http_methods(['GET'])
+
 @login_required(login_url='login')
+@require_http_methods(['GET'])
 def logout_view(request):
     """
     This function defines the logout of view of the applicaion.
@@ -97,8 +97,6 @@ def register_view(request):
     It redirects to the login page if a new user is successfully created.
     If there is an issue creating a user it adds the a error message to the django "messages" dictionary.
     """
-    signup_form = SignUpForm()
-
     if request.method == 'POST':
         
         first_name = request.POST.get('first_name')
@@ -118,7 +116,7 @@ def register_view(request):
         
         if confirm_password == password:
 
-            api_responce = requests.post(f'{request.scheme}://{request.get_host()}/api/user/create', json=request_dict)
+            api_responce = requests.post(f'{request.scheme}://{request.get_host()}/api/users/create', json=request_dict)
 
             if api_responce.status_code == 201:
             
@@ -130,13 +128,14 @@ def register_view(request):
 
                 for value in errors['errors'].values():
 
-                    messages.error(request, f'*{value[0]}')
+                    messages.error(request, '*' + str(value[0]))
                     break
                 
-        else:
-            
+        else:  
             messages.error(request, "*The passwords entered don't match.")
-        
+    
+    signup_form = SignUpForm()
+
     context = {'signup_form': signup_form}
 
     return render(request, 'signup.html', context)
@@ -147,11 +146,87 @@ def edit_profile_view(request):
     """
     This function defines the edit profile view of the application.
     """
-    edit_profile_form = EditProfileForm()
+    user_data = request.session['user-data']
+    token_key = request.session['token-key']
+
+    if request.method == 'POST':
+ 
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        user_name = request.POST.get('user_name')
+        bio = request.POST.get('bio')
+        display_pic = request.FILES or None
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        user_id = user_data['user_id']
+        headers = {'Authorization': f'token {token_key}'}
+        request_uri = f'{request.scheme}://{request.get_host()}/api/users/{user_id}/update'
+        api_responce = None
+
+        request_dict = {
+                'user_id': user_id,  
+                'first_name': first_name or None,
+                'last_name': last_name or None,
+                'user_name': user_name or None,
+                'bio': bio,
+                'password': new_password or None,
+        }
+
+        if user_name == None or user_name == user_data['user_name']:
+
+            request_dict.pop('user_name')
+
+        if new_password == None:
+       
+            api_responce = requests.patch(request_uri, json=request_dict, files = display_pic, headers=headers)
+
+            if api_responce.status_code == 200:
+                    
+                return redirect('index')
+
+            elif api_responce.status_code == 400:
+
+                errors = json.loads(api_responce.content) 
+
+                for value in errors['errors'].values():
+                    print(value)
+                    messages.error(request, '*' + str(value[0]))
+                    break
+
+        elif new_password != None and new_password == confirm_password:
+
+            api_responce = requests.patch(request_uri, json=request_dict, files = display_pic, headers=headers)
+       
+            if api_responce.status_code == 200:
+                    
+                return redirect('logout')
+
+            elif api_responce.status_code == 400:
+
+                errors = json.loads(api_responce.content) 
+
+                for value in errors['errors'].values():
+                    print(value)
+                    messages.error(request, '*' + str(value[0]))
+                    break
+        else: 
+            messages.error(request, "*The passwords entered don't match.")
+
+    edit_profile_form_data = {
+        'first_name':user_data['first_name'],
+        'last_name':user_data['last_name'],
+        'user_name':user_data['user_name'],
+        'bio':user_data['bio'],
+    }
+
+    edit_profile_form = EditProfileForm(data=edit_profile_form_data)
+    change_password_form = ChangePasswordForm()
 
     context = {
-        'user_data':request.session['user-data'],
-        'edit_profile_form': edit_profile_form
-        }
+        'user_data':user_data,
+        'edit_profile_form': edit_profile_form,
+        'change_password_form': change_password_form,
+    }
 
     return render(request, 'edit-profile.html', context)

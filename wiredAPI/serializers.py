@@ -27,3 +27,22 @@ class AuthenticationSerializer(serializers.Serializer):
     """
     email_address = serializers.EmailField(max_length=255, write_only=True, required=True)
     password = serializers.CharField(max_length=255, write_only=True, required=True)
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    """
+    This class serializes update fields into a JSON object.
+    """
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'user_name', 
+            'password',
+            'bio',
+            'display_pic',
+            ]
+        extra_kwargs = {
+            'user_name': {'required': False, 'allow_null': True},
+            'password': {'required': False, 'allow_null': True},
+            'bio': {'required': False, 'allow_null': True},
+            'display_pic': {'required': False, 'allow_null': True}
+        }

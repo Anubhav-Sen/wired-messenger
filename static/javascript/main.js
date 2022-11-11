@@ -10,12 +10,15 @@ const displayPicCropOverlay = document.getElementById('display-pic-crop-overlay'
 const imagePreview = document.getElementById('image-preview');
 const croppedImageSaveBtn = document.getElementById('cropped-image-save-btn');  
 const croppedImageCancelBtn = document.getElementById('cropped-image-cancel-btn');
+const changePasswordBtn = document.getElementById('change-password-btn');
+const changePasswordFieldsContainer = document.getElementById('change-password-fields-container');
 
 addEventListenerIfElementExists(profileBtn, 'click', switchToProfileSideArea);
 addEventListenerIfElementExists(editProfileBtn, 'click', function() {redirectFromOrigin('/edit-profile')});
 addEventListenerIfElementExists(editProfileBackBtn, 'click', function() {redirectFromOrigin('/')});
 addEventListenerIfElementExists(logOutBtn, 'click', function() {redirectFromOrigin('/logout')});
 addEventListenerIfElementExists(displayPicInput, 'change', buildCropperOnImageInput);
+addEventListenerIfElementExists(changePasswordBtn, 'click', toggleChangePasswordFields);
 addEventListenerToActionsButtons();
 
 function addEventListenerToActionsButtons() {
@@ -142,7 +145,7 @@ function buildCropperOnImageInput() {
     //The event listener also adds a display image element to the edit profile form if it dosent aldready exist.
     //The event listener also destroys the old cropper instance.
     //It sets an event listener on the cropper cancel button to destroy the cropper instance.
-    //The event listener also closes the cropper overlay and set the value of the image input to null.
+    //The event listener also closes the cropper overlay and set the value of the image input and image preview source to null.
 
 
     var imageData = displayPicInput.files[0];
@@ -203,4 +206,11 @@ function buildCropperOnImageInput() {
             displayPicCropOverlay.classList.add('hide');
         };
     });
+};
+
+function toggleChangePasswordFields() {
+    
+    //This function toggles the change password fields of the edit profile form.
+
+    changePasswordFieldsContainer.classList.toggle('hide');
 };

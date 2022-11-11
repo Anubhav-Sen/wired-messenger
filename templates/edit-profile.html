@@ -14,7 +14,7 @@
           
         </div>
 
-        <form id="edit-profile-form" class="single-page-form" method="POST">
+        <form id="edit-profile-form" class="single-page-form" enctype="multipart/form-data" method="POST">
     
             {% csrf_token %}
 
@@ -27,6 +27,14 @@
             </label>
 
             {{ edit_profile_form }}
+
+            <div id="change-password-btn">Change password</div>
+
+            <div id="change-password-fields-container" class="hide">
+                
+                {{ change_password_form }}
+
+            </div>
         
         </form>
 

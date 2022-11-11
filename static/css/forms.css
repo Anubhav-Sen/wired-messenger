@@ -61,11 +61,24 @@
     border-bottom: 2px solid #257AFD ;
 }
 
+
 .single-page-form label[for="display-pic-input"] {
     display: inherit;
     flex-direction: inherit;
     align-items: center;
     position: relative;
+}
+
+#change-password-btn{
+    font-size: 12px;
+    font-weight: 700;
+    color: #257AFD;
+}
+
+#change-password-fields-container {
+    display: inherit;
+    flex-direction: inherit;
+    gap: inherit;
 }
 
 #edit-display-pic-overlay {

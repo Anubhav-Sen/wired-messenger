@@ -61,12 +61,13 @@ class TestAunthenticateUserView(TestCase):
 
         valid_expected_response_dict = {
             'user-data': {
+                'user_id': self.user.user_id,
                 'first_name': self.user.first_name, 
                 'last_name': self.user.last_name, 
                 'user_name':self.user.user_name, 
                 'email_address': self.user.email_address,
                 'bio': self.user.bio,
-                'display_pic': self.user.display_pic or None
+                'display_pic': None
             },
             'token-key':self.token.key, 
         }
@@ -77,7 +78,7 @@ class TestAunthenticateUserView(TestCase):
 
         incorrect_expected_response_dict = {
             'errors': {
-                'credentials':('Incorrect email or password', 'InvalidCredentials'),
+                'credentials':('Incorrect email or password', 'invalid'),
                 }
             }
 
@@ -138,12 +139,13 @@ class TestCreateUserView(TestCase):
 
         valid_expected_response_dict = {
             'user-data': {
-                'first_name': user.first_name , 
+                'user_id': user.user_id,
+                'first_name': user.first_name, 
                 'last_name': user.last_name, 
                 'user_name': user.user_name, 
                 'email_address': user.email_address,
                 'bio': user.bio,
-                'display_pic': user.display_pic or None
+                'display_pic': None,
             },
             'token-key': token.key, 
         }
