@@ -5,8 +5,12 @@
 </div>
 
 <div id="profile-side-area">
-
-    <div class="display-pic-placeholder-large"><span>{{user_data.user_name.0 | upper}}</span></div>
+    
+    {% if user_data.display_pic %}
+        <img id="display-pic-edit-profile" class="display-pic-img-large" src="{{user_data.display_pic}}"></img>
+    {% else %}
+        <div class="display-pic-placeholder-large"><span>{{user_data.user_name.0 | upper}}</span></div>
+    {% endif %}
 
     <div id="profile-information">
 

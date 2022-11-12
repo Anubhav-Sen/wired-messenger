@@ -1,6 +1,6 @@
 from django.test import SimpleTestCase
 from django.urls import reverse, resolve
-from main.views import login_view, register_view, logout_view, index_view
+from main.views import login_view, register_view, logout_view, index_view, edit_profile_view
 
 class TestUrls(SimpleTestCase):
     """
@@ -23,6 +23,12 @@ class TestUrls(SimpleTestCase):
         url = reverse('sign-up')
 
         self.assertEquals(resolve(url).func, register_view)
+
+    def test_edit_profile_url(self):
+
+        url = reverse('edit-profile')
+
+        self.assertEquals(resolve(url).func, edit_profile_view)
     
     def test_index_url(self):
 

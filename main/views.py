@@ -95,7 +95,7 @@ def register_view(request):
     It renders the sign-up form.
     It makes an api request to create a new user.
     It redirects to the login page if a new user is successfully created.
-    If there is an issue creating a user it adds the a error message to the django "messages" dictionary.
+    If there is an issue creating a user it adds a error message to the django "messages" dictionary.
     """
     if request.method == 'POST':
         
@@ -145,6 +145,11 @@ def register_view(request):
 def edit_profile_view(request):
     """
     This function defines the edit profile view of the application.
+    It renders the edit profile form.
+    It makes an api request to update an existing user.
+    It redirects to the main view of the application if the user is successfully updated and no password change occurs.
+    In case of a password change it redirects to the logout view of the application.
+    If there is an issue updating a user it adds a error message to the django "messages" dictionary.
     """
     user_data = request.session['user-data']
     token_key = request.session['token-key']
@@ -164,8 +169,7 @@ def edit_profile_view(request):
         request_uri = f'{request.scheme}://{request.get_host()}/api/users/{user_id}/update'
         api_responce = None
 
-        request_dict = {
-                'user_id': user_id,  
+        request_dict = {  
                 'first_name': first_name or None,
                 'last_name': last_name or None,
                 'user_name': user_name or None,
@@ -177,7 +181,7 @@ def edit_profile_view(request):
 
             request_dict.pop('user_name')
 
-        if new_password == None:
+        if not new_password:
        
             api_responce = requests.patch(request_uri, json=request_dict, files = display_pic, headers=headers)
 
@@ -185,16 +189,16 @@ def edit_profile_view(request):
                     
                 return redirect('index')
 
-            elif api_responce.status_code == 400:
+            elif api_responce.status_code == 400 or api_responce.status_code == 401:
 
                 errors = json.loads(api_responce.content) 
 
                 for value in errors['errors'].values():
-                    print(value)
+    
                     messages.error(request, '*' + str(value[0]))
                     break
 
-        elif new_password != None and new_password == confirm_password:
+        elif new_password and new_password == confirm_password:
 
             api_responce = requests.patch(request_uri, json=request_dict, files = display_pic, headers=headers)
        
@@ -202,12 +206,12 @@ def edit_profile_view(request):
                     
                 return redirect('logout')
 
-            elif api_responce.status_code == 400:
+            elif api_responce.status_code == 400 or api_responce.status_code == 401:
 
                 errors = json.loads(api_responce.content) 
 
                 for value in errors['errors'].values():
-                    print(value)
+                    
                     messages.error(request, '*' + str(value[0]))
                     break
         else: 

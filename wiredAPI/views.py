@@ -50,7 +50,6 @@ def authenticate_user(request):
             return Response({'errors': {'credentials':('Incorrect email or password', 'invalid')}}, status=status.HTTP_400_BAD_REQUEST)
 
     else:
-        print(serializer.errors)
         return Response({'errors':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
@@ -84,8 +83,8 @@ def user(request, user_id):
 def create_user(request):
     """
     This function defines the "users/create" endpoint. 
-    It posts a JSON user object and adds it to the database and returns the object as a responce.
-    In case there is an error adding a user to the database the endpoint returns a JSON dictionary of errors as a responce.
+    It uses its request data to create a new object, adds it to the database, and returns the object as a responce.
+    In case there is an error adding an user to the database the endpoint returns a JSON dictionary of errors as a responce.
     """
     first_name = request.data.get('first_name')
     last_name = request.data.get('last_name')
@@ -134,6 +133,8 @@ def create_user(request):
 def update_user(request, user_id):
     """
     This function defines the "users/<int:user_id/update>" endpoint.
+    It uses its request data to updated and existing user and returns the updated user object as a responce.
+    In case there is an error while updating an user the endpoint returns a JSON dictionary of errors as a responce.
     """
     current_user = request.user
     first_name = request.data.get('first_name')
@@ -196,4 +197,4 @@ def update_user(request, user_id):
             return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     else:
-        return Response({'errors': {'Authorization': ("You are not authorized to change this object.",'unauthorized')}}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'errors': {'Authorization': ("You are not authorized to change this object.",'unauthorized')}}, status=status.HTTP_401_UNAUTHORIZED)
