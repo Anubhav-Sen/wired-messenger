@@ -143,6 +143,8 @@ def update_user(request, user_id):
     bio = request.data.get('bio')  
     display_pic = request.FILES.get('display_pic')
     password = request.data.get('password') or None
+    
+    print(display_pic)
 
     if current_user.user_id == user_id:
 

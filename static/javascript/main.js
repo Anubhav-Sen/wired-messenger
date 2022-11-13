@@ -212,5 +212,19 @@ function toggleChangePasswordFields() {
     
     //This function toggles the change password fields of the edit profile form.
 
+    let newPasswordField = document.getElementById('id_new_password');
+    let confirmPasswordField = document.getElementById('id_confirm_password');
+
+    if ((newPasswordField.readOnly == true) && (confirmPasswordField.readOnly == true)) {
+
+        newPasswordField.readOnly = false;
+        confirmPasswordField.readOnly = false;
+
+    } else {
+
+        newPasswordField.readOnly = true;
+        confirmPasswordField.readOnly = true;
+    };
+
     changePasswordFieldsContainer.classList.toggle('hide');
 };

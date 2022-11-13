@@ -138,8 +138,15 @@ body {
     height: 104px;
     width: 104px;
     display: block;;
+    border-radius: 50%;   
+    flex-shrink: 0;
+}
+
+.display-pic-img-small {
+    height: 40px;
+    width: 40px;
+    display: block;
     border-radius: 50%;  
-    cursor: default; 
     flex-shrink: 0;
 }
 

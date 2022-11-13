@@ -160,15 +160,15 @@ def edit_profile_view(request):
         last_name = request.POST.get('last_name')
         user_name = request.POST.get('user_name')
         bio = request.POST.get('bio')
-        display_pic = request.FILES or None
+        files = request.FILES
         new_password = request.POST.get('new_password')
         confirm_password = request.POST.get('confirm_password')
-        
+       
         user_id = user_data['user_id']
         headers = {'Authorization': f'token {token_key}'}
         request_uri = f'{request.scheme}://{request.get_host()}/api/users/{user_id}/update'
         api_responce = None
-
+        
         request_dict = {  
                 'first_name': first_name or None,
                 'last_name': last_name or None,
@@ -182,11 +182,15 @@ def edit_profile_view(request):
             request_dict.pop('user_name')
 
         if not new_password:
-       
-            api_responce = requests.patch(request_uri, json=request_dict, files = display_pic, headers=headers)
+        
+            api_responce = requests.patch(request_uri, data=request_dict, files = files, headers=headers)
+            response_dict = json.loads(api_responce.content)
 
             if api_responce.status_code == 200:
-                    
+
+                request.session['token-key'] = response_dict['token-key']
+                request.session['user-data'] = response_dict['user-data']
+      
                 return redirect('index')
 
             elif api_responce.status_code == 400 or api_responce.status_code == 401:
@@ -200,11 +204,11 @@ def edit_profile_view(request):
 
         elif new_password and new_password == confirm_password:
 
-            api_responce = requests.patch(request_uri, json=request_dict, files = display_pic, headers=headers)
+            api_responce = requests.patch(request_uri, data=request_dict, files = files, headers=headers)
        
             if api_responce.status_code == 200:
                     
-                return redirect('logout')
+                return redirect('logout')   
 
             elif api_responce.status_code == 400 or api_responce.status_code == 401:
 

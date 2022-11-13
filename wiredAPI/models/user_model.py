@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth import get_user_model
+from wiredAPI.storage import OverwriteStorage
 
 def user_profile_directory_path(instance, filename):
 
@@ -8,7 +9,8 @@ def user_profile_directory_path(instance, filename):
     This function creates a path for a user specific profile 
     directory which stores files related to the users profile.
     """
-
+    ext = filename.split('.')[-1]
+    filename = f'display_pic_user_{instance.user_id}.{ext}'
     return f'user_{instance.user_id}/profile/{filename}'
 
 class UserQuerySet(models.query.QuerySet):
@@ -115,7 +117,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     """
     This class models the custom django user.
-    It specifies the fields required for login.
+    It specifies the fields required for user.
     It defines methods for the user object.
     """
     user_id = models.BigAutoField(primary_key=True)
@@ -125,7 +127,7 @@ class User(AbstractBaseUser):
     email_address = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
     bio = models.CharField(max_length=500, null=True, blank=True)
-    display_pic = models.ImageField(upload_to=user_profile_directory_path, null=True, blank=True)
+    display_pic = models.ImageField(upload_to=user_profile_directory_path, storage=OverwriteStorage(), null=True, blank=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

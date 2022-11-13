@@ -129,3 +129,16 @@
     font-size: 14px;
     margin-top: 16px;
 }
+
+#create-chat-side-area { 
+    height: 100%;
+    width: 100%;
+    grid-area: side-area;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    box-sizing: border-box;
+    padding: 80px 40px 0 40px;
+    overflow-y: scroll;
+}

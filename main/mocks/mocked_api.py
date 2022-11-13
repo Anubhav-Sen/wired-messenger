@@ -80,7 +80,7 @@ def mocked_requests_post_register_view(url, json=None):
 
         return MockResponse(json_error_data, 400)
 
-def mocked_requests_patch_edit_profile_view(url, json=None, files=None, headers=None):
+def mocked_requests_patch_edit_profile_view(url, data=None, files=None, headers=None):
     """
     This function is a mock for the wired API update user endpoint.
     It mimmics the behaviours of the update user enpoint using dummy data to check if the username is unique and the user id is one.
@@ -90,7 +90,7 @@ def mocked_requests_patch_edit_profile_view(url, json=None, files=None, headers=
     end = url.find('/update')
     user_id = url[start:end]
 
-    user_name = json.get('user_name')
+    user_name = data.get('user_name')
 
     responce_dict = {
         'user-data':{

@@ -1,6 +1,10 @@
 <div id="side-area-header">
 
-    <div class='display-pic-placeholder'><span>{{user_data.user_name.0 | upper}}</span></div>
+    {% if user_data.display_pic %}
+        <img class='display-pic-img-small' src='{{user_data.display_pic}}'>
+    {% else %}
+        <div class='display-pic-placeholder'><span>{{user_data.user_name.0 | upper}}</span></div>
+    {% endif %}
 
     <div id='user-actions-btn-dropdown-container' class="btn-dropdown-container">
 

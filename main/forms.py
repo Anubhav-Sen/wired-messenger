@@ -33,5 +33,5 @@ class ChangePasswordForm(forms.Form):
     """
     This class defines all of the fields of the change password form.
     """
-    new_password = forms.CharField(label='', required=False, max_length=255, widget=forms.PasswordInput(attrs={'placeholder': 'New password'}))
-    confirm_password = forms.CharField(label='', required=False, max_length=255, widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password'})) 
+    new_password = forms.CharField(label='', required=False, max_length=255, widget=forms.PasswordInput(attrs={'placeholder': 'New password', 'readonly':'true'}))
+    confirm_password = forms.CharField(label='', required=False, max_length=255, widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password', 'readonly':'true'})) 
