@@ -1,5 +1,4 @@
 from django.db import models
-from wiredAPI.models.message_model import Message
 
 class Chat(models.Model):
     """
