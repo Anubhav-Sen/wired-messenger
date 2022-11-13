@@ -8,7 +8,20 @@
 
     <form id="create-chat-form" method="POST">
         
-        
+        {% csrf_token %}
+        {{ create_user_form }}
+
+        <div id="create-chat-form-error">
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <span>{{ message }}</span>
+                {% endfor %}
+            {% endif %}
+            
+        </div>
+
+        <input type="submit" value="Start chat">
 
     </form>
 

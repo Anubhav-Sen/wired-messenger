@@ -35,3 +35,9 @@ class ChangePasswordForm(forms.Form):
     """
     new_password = forms.CharField(label='', required=False, max_length=255, widget=forms.PasswordInput(attrs={'placeholder': 'New password', 'readonly':'true'}))
     confirm_password = forms.CharField(label='', required=False, max_length=255, widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password', 'readonly':'true'})) 
+
+class CreateChatForm(forms.Form):
+    """
+    This class defines all of the fields of the create chat form.
+    """
+    email_address = forms.EmailField(label='', max_length=255, widget=forms.TextInput(attrs={'placeholder': 'Email Address'})) 

@@ -24,8 +24,9 @@
     padding: 0 16px 0 16px;
 }
 
-#user-actions-btn-dropdown-container {
+#create-chat-btn {
     margin-left: auto;
+    margin-right: 8px;
 }
 
 #side-area-header .display-pic-placeholder {
@@ -136,8 +137,7 @@
     grid-area: side-area;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 16px;
+    align-items: stretch;
     box-sizing: border-box;
     padding: 80px 40px 0 40px;
     overflow-y: scroll;

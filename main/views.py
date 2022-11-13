@@ -3,7 +3,7 @@ import json
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
-from . forms import LoginForm, SignUpForm, EditProfileForm, ChangePasswordForm
+from . forms import LoginForm, SignUpForm, EditProfileForm, ChangePasswordForm, CreateChatForm
 from . custom_decorators import login_required
 
 @login_required(login_url='login')
@@ -12,10 +12,15 @@ def index_view(request):
     """
     This function defines the main view of the application.
     It renders the "index.html" template.
-    It also returns rendered partial templates.
+    It also returns rendered partial templates with their respective forms.
     """
 
-    context = {'user_data':request.session['user-data']}
+    create_chat_form = CreateChatForm()
+
+    context = {
+        'user_data':request.session['user-data'],
+        'create_user_form': create_chat_form,
+    }
 
     if request.method == 'GET' and request.headers.get('Partial-Template') == 'profile-side-area':
         
@@ -24,6 +29,10 @@ def index_view(request):
     elif request.method == 'GET' and request.headers.get('Partial-Template') == 'chat-list-side-area':
         
         return render(request, "chat-list.html", context)
+    
+    elif request.method == 'GET' and request.headers.get('Partial-Template') == 'create-chat-side-area':
+        
+        return render(request, "create-chat.html", context)
 
     else:
         return render(request, "index.html", context)

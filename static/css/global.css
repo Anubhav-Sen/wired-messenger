@@ -199,3 +199,13 @@ body {
     background-position: center;
     background-repeat: no-repeat;
 }
+
+.chat-icon {
+    height: 100%;
+    width: 100%;
+    display: block;
+    background-image: url(../assets/chat-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}

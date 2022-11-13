@@ -134,10 +134,54 @@
 }
 
 .single-page-form-error {
-    height: 24px;
+    min-height: 24px;
     display: inherit;
     flex-direction: inherit;
     margin: 8px 40px 0px 40px;
+    font-size: 12px;
+    font-weight: 600;
+    color: tomato;
+}
+
+#create-chat-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#create-chat-form input[type="text"] {
+    height: 40px;
+    width: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    outline: none;
+    border: none;
+    border-bottom: 2px solid #28282B;
+}
+
+#create-chat-form input[type="text"]:focus {
+    border-bottom: 2px solid #257AFD;
+}
+
+#create-chat-form input[type="submit"] {
+    height: 40px;
+    width: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    color: white;
+    outline: none;
+    border: none;
+    border-radius: 20px;
+    background-color: #28282B;
+}
+
+#create-chat-form input[type="submit"]:active {
+    background-color: #38383B;
+}
+
+#create-chat-form-error {
+    min-height: 24px;
+    display: inherit;
+    flex-direction: inherit;
     font-size: 12px;
     font-weight: 600;
     color: tomato;
