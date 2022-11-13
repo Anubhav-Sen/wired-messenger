@@ -14,6 +14,14 @@ def index_view(request):
     It renders the "index.html" template.
     It also returns rendered partial templates with their respective forms.
     """
+    user_data = request.session['user-data']
+    token_key = request.session['token-key']
+
+    if request.method == 'POST':
+        
+        email_address = request.POST.get('email_address')
+
+
 
     create_chat_form = CreateChatForm()
 
@@ -122,10 +130,12 @@ def register_view(request):
             'email_address': email_address,
             'password': password
         }
-        
+                
         if confirm_password == password:
 
-            api_responce = requests.post(f'{request.scheme}://{request.get_host()}/api/users/create', json=request_dict)
+            request_uri = f'{request.scheme}://{request.get_host()}/api/users'
+
+            api_responce = requests.post(request_uri, json=request_dict)
 
             if api_responce.status_code == 201:
             
@@ -175,7 +185,7 @@ def edit_profile_view(request):
        
         user_id = user_data['user_id']
         headers = {'Authorization': f'token {token_key}'}
-        request_uri = f'{request.scheme}://{request.get_host()}/api/users/{user_id}/update'
+        request_uri = f'{request.scheme}://{request.get_host()}/api/users/{user_id}'
         api_responce = None
         
         request_dict = {  

@@ -256,7 +256,7 @@ class TestEditProfileView(TestCase):
 
         self.session.save()
 
-    def test_register_view_GET(self):
+    def test_edit_profile_view_GET(self):
         """
         This function tests the get method of the edit profile view.
         It asserts if the connection to the edit profile view is successful.
@@ -268,7 +268,7 @@ class TestEditProfileView(TestCase):
         self.assertTemplateUsed(response, 'edit-profile.html')
     
     @mock.patch('main.views.requests.patch', side_effect=mocked_requests_patch_edit_profile_view)
-    def test_register_view_POST(self, mocked_post):
+    def test_edit_profile_view_POST(self, mocked_post):
         """
         This function tests the post method of the edit profile view.
         It asserts if the edit profile view remains as is when the invalid information is submitted.

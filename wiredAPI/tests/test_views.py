@@ -1,9 +1,6 @@
-import json
-from unittest import mock
-from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from wiredAPI.serializers import AuthenticationSerializer, UserSerializer, UpdateUserSerializer
@@ -91,24 +88,23 @@ class TestAunthenticateUserView(TestCase):
         self.assertDictEqual(invalid_data_response.data, invalid_expected_response_dict)  
         self.assertDictEqual(incorrect_data_response.data, incorrect_expected_response_dict)
 
-class TestCreateUserView(TestCase):
+class TestUsersView(TestCase):
     """
-    This class tests the create user view.
+    This class tests the users view.
     """
     def setUp(self):
         """
-        This function defines the set up required to test the create user view.
+        This function defines the set up required to test the users view.
         """
         self.client = APIClient()
-        self.url = reverse('create-user')
+        self.url = reverse('users')
         self.maxDiff = None
 
     def test_create_user_view_POST(self):
         """
         This function tests the post method of the create users view.
         It asserts if the create user view returns created when valid information is submitted.
-        It asserts if the create user view returns bad request when in
-        valid information is submitted.
+        It asserts if the create user view returns bad request when in valid information is submitted.
         It asserts if the create user view returns a dictionary that contains the expected key value pairs the information provided is valid.
         It asserts if the create user view returns a dictionary that contains the expected key value pairs the information provided is invalid.
         """
@@ -162,13 +158,13 @@ class TestCreateUserView(TestCase):
         self.assertDictEqual(valid_data_response.data, valid_expected_response_dict)    
         self.assertDictEqual(invalid_data_response.data, invalid_expected_response_dict)  
 
-class TestUpdateUserView(TestCase):
+class TestUserView(TestCase):
     """
-    This class tests the update user view.
+    This class tests the user view.
     """
     def setUp(self):
         """
-        This function defines the set up required to test the update user view.
+        This function defines the set up required to test the user view.
         """
         self.client = APIClient()
         self.existing_user = get_user_model().objects.create_user(
@@ -186,7 +182,7 @@ class TestUpdateUserView(TestCase):
             password = 'password'
             )
         self.token = Token.objects.create(user=self.user)
-        self.url = reverse('update-user', kwargs={'user_id': self.user.user_id})
+        self.url = reverse('user', kwargs={'user_id': self.user.user_id})
         self.maxDiff = None
 
     def test_update_user_view_PATCH(self):
@@ -223,7 +219,7 @@ class TestUpdateUserView(TestCase):
         invalid_request_serializer.is_valid()
 
         unauthorized_response = self.client.patch(self.url)
-        unauthorized_user_response = self.client.patch(reverse('update-user', kwargs={'user_id': self.existing_user.user_id}), **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
+        unauthorized_user_response = self.client.patch(reverse('user', kwargs={'user_id': self.existing_user.user_id}), **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
         valid_data_response = self.client.patch(self.url, data=valid_request_dict, **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
         invalid_data_response = self.client.patch(self.url, data=invalid_request_dict, **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
        

@@ -6,7 +6,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, AuthenticationSerializer, UpdateUserSerializer
-from .models import User
+from .models.chat_model import Chat
+from .models.chat_participant_model import ChatParticipant
 
 @api_view(['POST'])
 def authenticate_user(request):
@@ -52,37 +53,10 @@ def authenticate_user(request):
     else:
         return Response({'errors':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@api_view(['POST'])
 def users(request):
     """
-    This function defines the "users" endpoint. 
-    Tt serves all of the user objects in JSON.
-    """
-    users = User.objects.all()
-    serializer = UserSerializer(users, many=True)
-
-    return Response(serializer.data)  
-
-
-@api_view(['GET', 'POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def user(request, user_id):
-    """
-    This function defines the "user/<int:user_id>" endpoint. 
-    It serves an user object in JSON for a given user_id provided to it .
-    """
-    user = User.objects.get(user_id = user_id)
-    serializer = UserSerializer(user)
-
-    return Response(serializer.data)
-
-@api_view(['POST'])
-def create_user(request):
-    """
-    This function defines the "users/create" endpoint. 
+    This function defines the POST request to the "users" endpoint. 
     It uses its request data to create a new object, adds it to the database, and returns the object as a responce.
     In case there is an error adding an user to the database the endpoint returns a JSON dictionary of errors as a responce.
     """
@@ -126,77 +100,104 @@ def create_user(request):
     else:
         return Response({'errors' : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)          
 
-
-@api_view(['PATCH'])
+@api_view(['GET', 'PATCH'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def update_user(request, user_id):
+def user(request, user_id):
     """
-    This function defines the "users/<int:user_id/update>" endpoint.
-    It uses its request data to updated and existing user and returns the updated user object as a responce.
+    This function defines the GET request to "user/<int:user_id>" endpoint. 
+    It serves an user object in JSON for a given user_id provided to it.
+    This function also defines the PATCH request to "users/<int:user_id>" endpoint.
+    It uses its request data to update and existing user and returns the updated user object as a responce.
     In case there is an error while updating an user the endpoint returns a JSON dictionary of errors as a responce.
     """
-    current_user = request.user
-    first_name = request.data.get('first_name')
-    last_name = request.data.get('last_name')
-    user_name = request.data.get('user_name')
-    bio = request.data.get('bio')  
-    display_pic = request.FILES.get('display_pic')
-    password = request.data.get('password') or None
+    if request.method == 'GET':
+
+        user = get_user_model().objects.get(user_id = user_id)
+        serializer = UserSerializer(user)
+
+        return Response(serializer.data)
     
-    print(display_pic)
+    elif request.method == 'PATCH':
 
-    if current_user.user_id == user_id:
+        current_user = request.user
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        user_name = request.data.get('user_name')
+        bio = request.data.get('bio')  
+        display_pic = request.FILES.get('display_pic')
+        password = request.data.get('password') or None
 
-        serializer = UpdateUserSerializer(data=request.data)
+        if current_user.user_id == user_id:
 
-        if serializer.is_valid():
+            serializer = UpdateUserSerializer(data=request.data)
 
-            update_dict = {
-                'first_name': first_name,
-                'last_name': last_name,
-                'user_name': user_name,
-                'bio': bio,
-                'password': password,
-                'display_pic': display_pic
-            }
+            if serializer.is_valid():
 
-            null_values = []
-
-            for key, value in update_dict.items():
-
-                if value == None and key != 'bio':
-                    null_values.append(key)
-
-                if value == None and key == 'bio':
-                    value = ''
-
-            for value in null_values:
-                update_dict.pop(value)
-
-            user = get_user_model().objects.filter(user_id = user_id).update_user(**update_dict)
-
-            token = Token.objects.get(user=user) 
-
-            display_pic_url = None
-
-            if user.display_pic: 
-                display_pic_url = user.display_pic.url
-
-            user_data_dict = {
-                    'user_id': user.user_id,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'user_name': user.user_name,
-                    'email_address': user.email_address,
-                    'bio': user.bio or None,
-                    'display_pic': display_pic_url
+                update_dict = {
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'user_name': user_name,
+                    'bio': bio,
+                    'password': password,
+                    'display_pic': display_pic
                 }
 
-            return Response({'user-data': user_data_dict,'token-key': token.key}, status=status.HTTP_200_OK)
+                null_values = []
 
+                for key, value in update_dict.items():
+
+                    if value == None and key != 'bio':
+                        null_values.append(key)
+
+                    if value == None and key == 'bio':
+                        value = ''
+
+                for value in null_values:
+                    update_dict.pop(value)
+
+                user = get_user_model().objects.filter(user_id = user_id).update_user(**update_dict)
+
+                token = Token.objects.get(user=user) 
+
+                display_pic_url = None
+
+                if user.display_pic: 
+                    display_pic_url = user.display_pic.url
+                
+                user_data_dict = {
+                        'user_id': user.user_id,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'user_name': user.user_name,
+                        'email_address': user.email_address,
+                        'bio': user.bio or None,
+                        'display_pic': display_pic_url
+                    }
+
+                return Response({'user-data': user_data_dict,'token-key': token.key}, status=status.HTTP_200_OK)
+
+            else:
+                return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
         else:
-            return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    
-    else:
-        return Response({'errors': {'Authorization': ("You are not authorized to change this object.",'unauthorized')}}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'errors': {'Authorization': ("You are not authorized to change this object.",'unauthorized')}}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def create_chat(request):
+    """
+    This function defines the "chats/create" endpoint.
+    It uses its request data to create a .
+    In case there is an error while updating an user the endpoint returns a JSON dictionary of errors as a responce.
+    """
+    email_address = request.data.get('email_address')
+
+    current_user = request.user
+    chat_user = get_user_model().objects.filter(email_address = email_address)
+
+    new_chat = Chat.objects.create(title = chat_user.user_name)
+
+    ChatParticipant.objects.create(chat = new_chat, participant = current_user)
+    ChatParticipant.objects.create(chat = new_chat, participant = chat_user)

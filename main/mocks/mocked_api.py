@@ -51,7 +51,6 @@ def mocked_requests_post_register_view(url, json=None):
     This function is a mock for the wired API create user endpoint.
     It mimmics the behaviours of the create user enpoint using dummy data to check if the email and username is unique.
     """
-
     responce_dict = {
         'user-data':{
             'user_id': 1,
@@ -77,7 +76,6 @@ def mocked_requests_post_register_view(url, json=None):
         return MockResponse(json_data, 201)
 
     else:
-
         return MockResponse(json_error_data, 400)
 
 def mocked_requests_patch_edit_profile_view(url, data=None, files=None, headers=None):
@@ -86,10 +84,7 @@ def mocked_requests_patch_edit_profile_view(url, data=None, files=None, headers=
     It mimmics the behaviours of the update user enpoint using dummy data to check if the username is unique and the user id is one.
     It also mimmics the behaviour of the enpoints and checks if there is an authorization header with a token.
     """ 
-    start = url.find('users/') + len('users/')
-    end = url.find('/update')
-    user_id = url[start:end]
-
+    user_id = url.partition('users/')[2]
     user_name = data.get('user_name')
 
     responce_dict = {
