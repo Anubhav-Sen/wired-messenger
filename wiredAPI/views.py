@@ -5,9 +5,8 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, AuthenticationSerializer, UpdateUserSerializer
-from .models.chat_model import Chat
-from .models.chat_participant_model import ChatParticipant
+from .serializers import *
+from .models import *
 
 @api_view(['POST'])
 def authenticate_user(request):
@@ -30,22 +29,9 @@ def authenticate_user(request):
             
             token, created = Token.objects.get_or_create(user=user)
 
-            display_pic_url = None
-
-            if user.display_pic:
-                display_pic_url = user.display_pic.url
-
-            user_data_dict = {
-                'user_id': user.user_id,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'user_name': user.user_name,
-                'email_address': user.email_address,
-                'bio': user.bio or None,
-                'display_pic': display_pic_url,
-            }
-
-            return Response({'user-data': user_data_dict,'token-key': token.key}, status=status.HTTP_200_OK)
+            user_dict = UserSerializer(user)
+            
+            return Response({'user-data': user_dict.data,'token-key': token.key}, status=status.HTTP_200_OK)
 
         else:
             return Response({'errors': {'credentials':('Incorrect email or password', 'invalid')}}, status=status.HTTP_400_BAD_REQUEST)
@@ -80,22 +66,9 @@ def users(request):
             
         token = Token.objects.create(user=user) 
 
-        display_pic_url = None
-        
-        if user.display_pic: 
-            display_pic_url = user.display_pic.url
+        user_dict = UserSerializer(user)
 
-        user_data_dict = {
-                'user_id': user.user_id,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'user_name': user.user_name,
-                'email_address': user.email_address,
-                'bio': user.bio or None,
-                'display_pic': display_pic_url
-            }
-
-        return Response({'user-data': user_data_dict,'token-key': token.key}, status=status.HTTP_201_CREATED)
+        return Response({'user-data': user_dict.data,'token-key': token.key}, status=status.HTTP_201_CREATED)
 
     else:
         return Response({'errors' : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)          
@@ -121,27 +94,14 @@ def user(request, user_id):
     elif request.method == 'PATCH':
 
         current_user = request.user
-        first_name = request.data.get('first_name')
-        last_name = request.data.get('last_name')
-        user_name = request.data.get('user_name')
-        bio = request.data.get('bio')  
-        display_pic = request.FILES.get('display_pic')
-        password = request.data.get('password') or None
 
         if current_user.user_id == user_id:
 
             serializer = UpdateUserSerializer(data=request.data)
 
             if serializer.is_valid():
-
-                update_dict = {
-                    'first_name': first_name,
-                    'last_name': last_name,
-                    'user_name': user_name,
-                    'bio': bio,
-                    'password': password,
-                    'display_pic': display_pic
-                }
+                
+                update_dict = serializer.validated_data
 
                 null_values = []
 
@@ -158,24 +118,11 @@ def user(request, user_id):
 
                 user = get_user_model().objects.filter(user_id = user_id).update_user(**update_dict)
 
-                token = Token.objects.get(user=user) 
+                token = Token.objects.get(user=user)
 
-                display_pic_url = None
+                user_dict = UserSerializer(user) 
 
-                if user.display_pic: 
-                    display_pic_url = user.display_pic.url
-                
-                user_data_dict = {
-                        'user_id': user.user_id,
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'user_name': user.user_name,
-                        'email_address': user.email_address,
-                        'bio': user.bio or None,
-                        'display_pic': display_pic_url
-                    }
-
-                return Response({'user-data': user_data_dict,'token-key': token.key}, status=status.HTTP_200_OK)
+                return Response({'user-data': user_dict.data,'token-key': token.key}, status=status.HTTP_200_OK)
 
             else:
                 return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -186,18 +133,27 @@ def user(request, user_id):
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def create_chat(request):
+def chats(request):
     """
-    This function defines the "chats/create" endpoint.
+    This function defines POST requests to the "chats" endpoint.
     It uses its request data to create a .
     In case there is an error while updating an user the endpoint returns a JSON dictionary of errors as a responce.
     """
-    email_address = request.data.get('email_address')
+    email_serializer = EmailSerializer(data=request.data)
 
-    current_user = request.user
-    chat_user = get_user_model().objects.filter(email_address = email_address)
+    if email_serializer.is_valid():
 
-    new_chat = Chat.objects.create(title = chat_user.user_name)
+        email_address = request.data.get('email_address')
 
-    ChatParticipant.objects.create(chat = new_chat, participant = current_user)
-    ChatParticipant.objects.create(chat = new_chat, participant = chat_user)
+        contact_user = get_user_model().objects.get(email_address = email_address)
+
+
+
+        #participant_one = ChatParticipant.objects.create(chat = new_chat, participant = request.user)
+        #participant_two = ChatParticipant.objects.create(chat = new_chat, participant = chat_user)
+
+        response_dict = {
+            
+        }
+            
+        return Response()

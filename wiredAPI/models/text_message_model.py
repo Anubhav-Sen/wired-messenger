@@ -11,6 +11,12 @@ class TextMessage(models.Model):
     text_message_id = models.BigAutoField(primary_key=True)
     content = models.TextField()
     message = models.OneToOneField(Message, on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    model_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        """
+        This method defines the string to be returned for the model object.
+        """
+        return self.content

@@ -19,6 +19,12 @@ class VideoMessage(models.Model):
     video = models.FileField(upload_to=video_media_directory_path)
     content = models.TextField(null=True, blank=True)
     message = models.OneToOneField(Message, on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    model_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        """
+        This method defines the string to be returned for the model object.
+        """
+        return self.content

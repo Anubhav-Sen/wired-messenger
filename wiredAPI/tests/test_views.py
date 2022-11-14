@@ -124,9 +124,6 @@ class TestUsersView(TestCase):
             'password': 'password' 
         }
 
-        valid_request_serializer = UserSerializer(data = valid_request_dict)
-        valid_request_serializer.is_valid()
-
         invalid_request_serializer = UserSerializer(data = invalid_request_dict)
         invalid_request_serializer.is_valid()
 
@@ -136,16 +133,10 @@ class TestUsersView(TestCase):
         user = get_user_model().objects.get(email_address = 'test@test.com')
         token = Token.objects.get(user = user)
 
+        valid_expected_response_user = UserSerializer(user)
+
         valid_expected_response_dict = {
-            'user-data': {
-                'user_id': user.user_id,
-                'first_name': user.first_name, 
-                'last_name': user.last_name, 
-                'user_name': user.user_name, 
-                'email_address': user.email_address,
-                'bio': user.bio,
-                'display_pic': None,
-            },
+            'user-data': valid_expected_response_user.data,
             'token-key': token.key, 
         }
 

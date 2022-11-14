@@ -140,6 +140,9 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     def __str__(self):
+        """
+        This method defines the string to be returned for the model object.
+        """
         return self.email_address
 
     def has_perm(self, perm, obj=None): 
