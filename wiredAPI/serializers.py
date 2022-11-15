@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
     """
@@ -52,16 +53,36 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             'display_pic': {'required': False, 'allow_null': True}
         }
 
-class EmailSerializer(serializers.Serializer):
+class CreateChatSerializer(serializers.Serializer):
     """
-    This class serializes an email field into a python dictionary.
+    This class serializes chat creation fields into a python dictionary.
     It also validates fields passed to it.
     """
+    display_name = serializers.CharField(max_length=255, write_only=True, required=False, allow_blank=True, allow_null=True)
     email_address = serializers.EmailField(max_length=255, write_only=True, required=True)
+
+class ChatParticipantSerializer(serializers.ModelSerializer):
+    """
+    This class serializes the selected fields of the Participant model into a python dictionary.
+    It also validates fields passed to it.
+    """
+    model_user = UserSerializer()
+
+    class Meta:
+        model = Participant()
+        fields = ['model_user'] 
 
 class ChatSerializer(serializers.ModelSerializer):
     """
-    This class serializes chat fields into a python dictionary.
+    This class serializes the selected fields of the chat model into a python dictionary.
     It also validates fields passed to it.
-    """
-    pass
+    """     
+    participants = ChatParticipantSerializer(many=True)
+
+    class Meta:
+        model = Chat()
+        fields = [   
+            'chat_id',
+            'display_name',
+            'participants'
+        ]

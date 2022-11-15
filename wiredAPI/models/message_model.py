@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from wiredAPI.models.contact_model import Contact
+from wiredAPI.models.chat_model import Chat
 
 class Message(models.Model):
     """
@@ -11,8 +11,9 @@ class Message(models.Model):
     MESSAGE_CHOICES = (("TEXT", "Text"),("IMAGE", "Image"),("VIDEO", "Video"))
 
     message_id = models.BigAutoField(primary_key=True)
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    reciver = models.ForeignKey(Contact, on_delete=models.CASCADE)
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='receiver')
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
     msg_type = models.CharField(max_length=5, choices=MESSAGE_CHOICES, default='TEXT')
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -21,4 +22,4 @@ class Message(models.Model):
         """
         This method defines the string to be returned for the model object.
         """
-        return f'sent-by: {self.sender}, to: {self.reciver}, msg-type: {self.msg_type}'
+        return f'Sent-by: {self.sender}, To: {self.reciver}, Msg-type: {self.msg_type}, In: {self.chat}'

@@ -54,9 +54,9 @@ class TestLoginView(TestCase):
         It asserts if the login view redirects to index when it is accessed as the user is already logged in.
         """
         session = self.client.session
-        session['token-key'] = 'test-token'
+        session['token_key'] = 'test-token'
 
-        session['user-data'] = {
+        session['user_data'] = {
             'user_id': 1,
             'first_name':'test', 
             'last_name':'test', 
@@ -137,9 +137,9 @@ class TestLogoutView(TestCase):
         self.client = Client()
         self.url = reverse('logout')
         self.session = self.client.session
-        self.session['token-key'] = 'test-token'
+        self.session['token_key'] = 'test-token'
 
-        self.session['user-data'] = {
+        self.session['user_data'] = {
             'user_id': 1,
             'first_name':'test', 
             'last_name':'test', 
@@ -151,7 +151,7 @@ class TestLogoutView(TestCase):
 
         self.session.save()
         
-    def test_login_view_GET(self):
+    def test_logout_view_GET(self):
         """
         This function tests the get method of the logout view.
         It asserts if the logout view redirects to login when it is accessed.
@@ -182,9 +182,9 @@ class TestIndexView(TestCase):
         self.client = Client()
         self.url = reverse('index')
         self.session = self.client.session
-        self.session['token-key'] = 'test-token'
+        self.session['token_key'] = 'test-token'
 
-        self.session['user-data'] = {
+        self.session['user_data'] = {
             'user_id': 1,
             'first_name':'test', 
             'last_name':'test', 
@@ -241,9 +241,9 @@ class TestEditProfileView(TestCase):
         self.client = Client()
         self.url = reverse('edit-profile')
         self.session = self.client.session
-        self.session['token-key'] = 'test-token'
+        self.session['token_key'] = 'test-token'
 
-        self.session['user-data'] = {
+        self.session['user_data'] = {
             'user_id': 1,
             'first_name':'test', 
             'last_name':'test', 

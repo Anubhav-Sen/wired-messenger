@@ -143,9 +143,23 @@
     color: tomato;
 }
 
-#create-chat-form {
+#create-chat-form-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
+}
+
+#create-chat-form {
+    display: inherit;
+    flex-direction: inherit;
+    gap: 24px;
+}
+
+#create-chat-form label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #257AFD;
+    margin-bottom: -24px;
 }
 
 #create-chat-form input[type="text"] {
@@ -162,7 +176,12 @@
     border-bottom: 2px solid #257AFD;
 }
 
-#create-chat-form input[type="submit"] {
+#create-chat-form-footer {
+    display: inherit;
+    flex-direction: inherit;
+}
+
+#create-chat-form-footer button {
     height: 40px;
     width: auto;
     font-family: 'IBM Plex Mono', monospace;
@@ -174,7 +193,7 @@
     background-color: #28282B;
 }
 
-#create-chat-form input[type="submit"]:active {
+#create-chat-form-footer button:active {
     background-color: #38383B;
 }
 

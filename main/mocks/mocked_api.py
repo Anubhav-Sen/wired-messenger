@@ -20,7 +20,7 @@ def mocked_requests_post_login_view(url, json=None):
     It mimmics the authentication behaviour of the api enpoint using dummy data.
     """
     responce_dict = {
-        'user-data':{
+        'user_data':{
             'user_id': 1,
             'first_name':'test', 
             'last_name':'test', 
@@ -29,7 +29,7 @@ def mocked_requests_post_login_view(url, json=None):
             'bio': 'this is a bio',
             'display_pic': None
             },
-        'token-key': 'test-token'
+        'token_key': 'test-token'
         }
 
     responce_error_dict = {
@@ -52,7 +52,7 @@ def mocked_requests_post_register_view(url, json=None):
     It mimmics the behaviours of the create user enpoint using dummy data to check if the email and username is unique.
     """
     responce_dict = {
-        'user-data':{
+        'user_data':{
             'user_id': 1,
             'first_name':'test', 
             'last_name':'test', 
@@ -61,7 +61,7 @@ def mocked_requests_post_register_view(url, json=None):
             'bio': 'this is a bio',
             'display_pic': None
             },
-        'token-key': 'test-token'
+        'token_key': 'test-token'
     }
 
     responce_error_dict = {
@@ -88,7 +88,7 @@ def mocked_requests_patch_edit_profile_view(url, data=None, files=None, headers=
     user_name = data.get('user_name')
 
     responce_dict = {
-        'user-data':{
+        'user_data':{
             'user_id': 1,
             'first_name':'test', 
             'last_name':'test', 
@@ -97,7 +97,7 @@ def mocked_requests_patch_edit_profile_view(url, data=None, files=None, headers=
             'bio': 'this is a bio',
             'display_pic': None
             },
-        'token-key': 'test-token'
+        'token_key': 'test-token'
     }
 
     responce_errors_dict = {

@@ -40,4 +40,5 @@ class CreateChatForm(forms.Form):
     """
     This class defines all of the fields of the create chat form.
     """
-    email_address = forms.EmailField(label='', max_length=255, widget=forms.TextInput(attrs={'placeholder': 'Enter an email address'})) 
+    display_name = forms.CharField(label='Chat display name', label_suffix='', required=False, max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Display name'}))
+    email_address = forms.EmailField(label='Chat email address', label_suffix='', max_length=255, widget=forms.TextInput(attrs={'placeholder': 'Email address'})) 

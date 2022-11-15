@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse, resolve
 from django.contrib.auth import get_user_model
-from wiredAPI.views import authenticate_user, users, user
+from wiredAPI.views import *
 
 class TestUris(TestCase):
     """
@@ -36,3 +36,9 @@ class TestUris(TestCase):
         url = reverse('user', kwargs={'user_id': 1})
 
         self.assertEquals(resolve(url).func, user)
+
+    def test_chats_uri(self):
+
+        url = reverse('chats')
+
+        self.assertEquals(resolve(url).func, chats)

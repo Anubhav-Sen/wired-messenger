@@ -2,7 +2,6 @@ from django.db import models
 from django.conf import settings
 from wiredAPI.models.message_model import Message
 
-
 def image_media_directory_path(instance, filename):
     """
     This function creates a path for a user specific media 

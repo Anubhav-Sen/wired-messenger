@@ -1,28 +1,38 @@
 <div id="side-area-header">
 
     <button id="create-chat-back-btn" class="round-btn"><i class="back-icon"></i></button>
+    
+    <span id="title">Create chat</span>
 
 </div>
 
 <div id="create-chat-side-area">
 
-    <form id="create-chat-form" method="POST">
+    <div id="create-chat-form-container">
+
+        <form id="create-chat-form" method="POST">
         
-        {% csrf_token %}
-        {{ create_user_form }}
+            {% csrf_token %}
+            {{ create_chat_form }}
+    
+        </form>
 
-        <div id="create-chat-form-error">
-            
-            {% if messages %}
-                {% for message in messages %}
-                    <span>{{ message }}</span>
-                {% endfor %}
-            {% endif %}
-            
+        <div id="create-chat-form-footer">
+
+            <div id="create-chat-form-error">
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <span>{{ message }}</span>
+                    {% endfor %}
+                {% endif %}
+                
+            </div>
+        
+            <button form="create-chat-form">Create</button>
+
         </div>
-
-        <input type="submit" value="Start chat">
-
-    </form>
-
+ 
+    </div>
+   
 </div>

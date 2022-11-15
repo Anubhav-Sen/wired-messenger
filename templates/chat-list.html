@@ -24,310 +24,43 @@
 
 <div id="chat-list-side-area">
 
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
+    {% for chat in chats.user_chats %}
 
-        <div class="chat-data">
+        {% for participant in chat.participants %}
+         
+            {% if participant.model_user.user_id != request.session.user_data.user_id %}
 
-            <span>Username</span>
-            <span>last message</span>
+                <div class="chat">
 
-        </div>
+                    {% if participant.model_user.display_pic %}     
+                        <img class='display-pic-img-small' src='{{participant.model_user.display_pic}}'>
+                    {% else %}     
+                        <div class="display-pic-placeholder"><span>{{participant.model_user.user_name.0 | upper}}</span></div>
+                    {% endif %}
 
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
+                    <div class="chat-data">
+                        
+                        {% if chat.display_name %}
+                            <span>{{chat.display_name}}</span>
+                        {% else %}
+                            <span>{{participant.model_user.user_name}}</span>
+                        {% endif %}
 
-    </div>
+                        <span>last message</span>
 
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
+                    </div>
 
-        <div class="chat-data">
+                    <div class="chat-timestamp">
+                        <span>00/00/0000</span>
+                        <span>00:00PM</span>
+                    </div>
 
-            <span>Username</span>
-            <span>last message</span>
+                </div>
 
-        </div>
+            {% endif %}
 
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
+        {% endfor %}
 
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-    
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
-
-    <div class="chat">
-        
-        <div class="display-pic-placeholder"><span>U</span></div>
-
-        <div class="chat-data">
-
-            <span>Username</span>
-            <span>last message</span>
-
-        </div>
-
-        <div class="chat-timestamp">
-            <span>00/00/0000</span>
-            <span>00:00PM</span>
-        </div>
-
-    </div>
+    {% endfor %}
 
 </div>

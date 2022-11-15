@@ -3,7 +3,7 @@ import json
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
-from . forms import LoginForm, SignUpForm, EditProfileForm, ChangePasswordForm, CreateChatForm
+from . forms import *
 from . custom_decorators import login_required
 
 @login_required(login_url='login')
@@ -14,28 +14,49 @@ def index_view(request):
     It renders the "index.html" template.
     It also returns rendered partial templates with their respective forms.
     """
-    user_data = request.session['user-data']
-    token_key = request.session['token-key']
-
-    if request.method == 'POST':
-        
-        email_address = request.POST.get('email_address')
-
-
-
+    user_data = request.session['user_data']
+    token_key = request.session['token_key']
+    
+    headers = {'Authorization': f'token {token_key}'}
+    chats_uri = f'{request.scheme}://{request.get_host()}/api/chats'
+    
+    chats_get_responce = requests.get(chats_uri, headers=headers)
+    chats_get_dict = json.loads(chats_get_responce.content)
+    
     create_chat_form = CreateChatForm()
 
     context = {
-        'user_data':request.session['user-data'],
-        'create_user_form': create_chat_form,
+        'user_data': user_data,
+        'chats': chats_get_dict,
+        'create_chat_form': create_chat_form,
     }
 
-    if request.method == 'GET' and request.headers.get('Partial-Template') == 'profile-side-area':
+    if request.method == 'POST':
         
+        display_name = request.POST.get('display_name')
+        email_address = request.POST.get('email_address')
+
+        request_dict = {
+            'display_name': display_name,
+            'email_address': email_address
+        }
+        
+        chats_post_responce = requests.post(chats_uri, json=request_dict, headers=headers)
+        chats_post_dict = json.loads(chats_post_responce.content)
+
+        if chats_post_responce.status_code == 400:
+            
+            for value in chats_post_dict['errors'].values():
+
+                messages.error(request, '*' + str(value[0]))
+                break
+        
+    if request.method == 'GET' and request.headers.get('Partial-Template') == 'profile-side-area':
+
         return render(request, "profile.html", context)
     
     elif request.method == 'GET' and request.headers.get('Partial-Template') == 'chat-list-side-area':
-        
+             
         return render(request, "chat-list.html", context)
     
     elif request.method == 'GET' and request.headers.get('Partial-Template') == 'create-chat-side-area':
@@ -56,7 +77,7 @@ def login_view(request):
     if there is an issue loging in it adds the error message to the django "messages" dictionary.
     """
     
-    if request.session.get('token-key'):
+    if request.session.get('token_key'):
 
        return redirect('index')
 
@@ -70,13 +91,15 @@ def login_view(request):
             'password' : password
         }
 
-        api_responce = requests.post(f'{request.scheme}://{request.get_host()}/api/authenticate-user', json=request_dict)
+        request_uri = f'{request.scheme}://{request.get_host()}/api/authenticate-user'
+
+        api_responce = requests.post(request_uri, json=request_dict)
         response_dict = json.loads(api_responce.content)
 
         if api_responce.status_code == 200:
 
-            request.session['token-key'] = response_dict['token-key']
-            request.session['user-data'] = response_dict['user-data']
+            request.session['token_key'] = response_dict['token_key']
+            request.session['user_data'] = response_dict['user_data']
 
             return redirect('index')
 
@@ -170,8 +193,8 @@ def edit_profile_view(request):
     In case of a password change it redirects to the logout view of the application.
     If there is an issue updating a user it adds a error message to the django "messages" dictionary.
     """
-    user_data = request.session['user-data']
-    token_key = request.session['token-key']
+    user_data = request.session['user_data']
+    token_key = request.session['token_key']
 
     if request.method == 'POST':
  
@@ -186,6 +209,7 @@ def edit_profile_view(request):
         user_id = user_data['user_id']
         headers = {'Authorization': f'token {token_key}'}
         request_uri = f'{request.scheme}://{request.get_host()}/api/users/{user_id}'
+
         api_responce = None
         
         request_dict = {  
@@ -207,8 +231,8 @@ def edit_profile_view(request):
 
             if api_responce.status_code == 200:
 
-                request.session['token-key'] = response_dict['token-key']
-                request.session['user-data'] = response_dict['user-data']
+                request.session['token_key'] = response_dict['token_key']
+                request.session['user_data'] = response_dict['user_data']
       
                 return redirect('index')
 

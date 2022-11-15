@@ -8,7 +8,7 @@ def login_required(login_url=None):
     def decorator(function):
         def wrapper(request, *args, **kwargs):
 
-            token_key = request.session.get('token-key')  
+            token_key = request.session.get('token_key')  
 
             if not token_key:
 

@@ -3,7 +3,8 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
-from wiredAPI.serializers import AuthenticationSerializer, UserSerializer, UpdateUserSerializer
+from wiredAPI.serializers import *
+from wiredAPI.models import *
 
 class TestAunthenticateUserView(TestCase):
     """
@@ -22,7 +23,8 @@ class TestAunthenticateUserView(TestCase):
             email_address = 'test@test.com', 
             password = 'password'
             )
-        self.token = Token.objects.create(user=self.user)
+        self.token = Token.objects.create(user=self.user) 
+        self.user_serializer = UserSerializer(self.user)
         self.maxDiff = None
 
     def test_authenticate_user_view_POST(self):
@@ -58,16 +60,8 @@ class TestAunthenticateUserView(TestCase):
         incorrect_data_response = self.client.post(self.url, data=incorrect_request_dict)
 
         valid_expected_response_dict = {
-            'user-data': {
-                'user_id': self.user.user_id,
-                'first_name': self.user.first_name, 
-                'last_name': self.user.last_name, 
-                'user_name':self.user.user_name, 
-                'email_address': self.user.email_address,
-                'bio': self.user.bio,
-                'display_pic': None
-            },
-            'token-key':self.token.key, 
+            'user_data': self.user_serializer.data,
+            'token_key': self.token.key, 
         }
 
         invalid_expected_response_dict = {
@@ -76,7 +70,7 @@ class TestAunthenticateUserView(TestCase):
 
         incorrect_expected_response_dict = {
             'errors': {
-                'credentials':('Incorrect email or password', 'invalid'),
+                'credentials':('Incorrect email or password.', 'invalid'),
                 }
             }
 
@@ -100,13 +94,13 @@ class TestUsersView(TestCase):
         self.url = reverse('users')
         self.maxDiff = None
 
-    def test_create_user_view_POST(self):
+    def test_users_view_POST(self):
         """
-        This function tests the post method of the create users view.
-        It asserts if the create user view returns created when valid information is submitted.
-        It asserts if the create user view returns bad request when in valid information is submitted.
-        It asserts if the create user view returns a dictionary that contains the expected key value pairs the information provided is valid.
-        It asserts if the create user view returns a dictionary that contains the expected key value pairs the information provided is invalid.
+        This function tests the post method of the users view.
+        It asserts if the users view returns created when valid information is submitted.
+        It asserts if the users view returns bad request when in valid information is submitted.
+        It asserts if the users view returns a dictionary that contains the expected key value pairs the information provided is valid.
+        It asserts if the users view returns a dictionary that contains the expected key value pairs the information provided is invalid.
         """
         valid_request_dict = {
             'first_name': 'test',
@@ -136,8 +130,8 @@ class TestUsersView(TestCase):
         valid_expected_response_user = UserSerializer(user)
 
         valid_expected_response_dict = {
-            'user-data': valid_expected_response_user.data,
-            'token-key': token.key, 
+            'user_data': valid_expected_response_user.data,
+            'token_key':  token.key, 
         }
 
         invalid_expected_response_dict = {
@@ -176,16 +170,15 @@ class TestUserView(TestCase):
         self.url = reverse('user', kwargs={'user_id': self.user.user_id})
         self.maxDiff = None
 
-    def test_update_user_view_PATCH(self):
+    def test_user_view_PATCH(self):
         """
-        This function tests the patch method of the update user view.  
-        It asserts if the update user view returns unauthorized when no authorization header is passed.
-        It asserts if the update user view returns ok when valid information is submitted.
-        It asserts if the update user view returns bad request when invalid information is submitted.
-        It asserts if the update user view returns unauthorized when the user_id of another user is passed as an argument.
-        It asserts if the update user view returns a dictionary that contains the expected key value pairs the information provided is valid.
-        It asserts if the update user view returns a dictionary that contains the expected key value pairs the information provided is invalid.
-        It asserts if the update user view returns a dictionary that contains the expected key value pairs the when the user_id of another is passed as an argument.
+        This function tests the patch method of the user view.  
+        It asserts if the user view returns ok when valid information is submitted.
+        It asserts if the user view returns bad request when invalid information is submitted.
+        It asserts if the user view returns unauthorized when the user_id of another user is passed as an argument.
+        It asserts if the user view returns a dictionary that contains the expected key value pairs the information provided is valid.
+        It asserts if the user view returns a dictionary that contains the expected key value pairs the information provided is invalid.
+        It asserts if the user view returns a dictionary that contains the expected key value pairs the when the user_id of another is passed as an argument.
         """
         valid_request_dict = {
             'first_name': 'updated-fn',
@@ -209,22 +202,17 @@ class TestUserView(TestCase):
         invalid_request_serializer = UpdateUserSerializer(data = invalid_request_dict)
         invalid_request_serializer.is_valid()
 
-        unauthorized_response = self.client.patch(self.url)
         unauthorized_user_response = self.client.patch(reverse('user', kwargs={'user_id': self.existing_user.user_id}), **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
         valid_data_response = self.client.patch(self.url, data=valid_request_dict, **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
         invalid_data_response = self.client.patch(self.url, data=invalid_request_dict, **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
-       
+              
+        user = get_user_model().objects.get(user_id = self.user.user_id)
+
+        user_serializer = UserSerializer(user)
+
         valid_expected_response_dict = {
-            'user-data': {
-                'user_id': self.user.user_id,
-                'first_name': 'updated-fn', 
-                'last_name': 'updated-ln', 
-                'user_name': 'updated-un', 
-                'email_address': self.user.email_address,
-                'bio': 'updated-bio',
-                'display_pic': None,
-            },
-            'token-key': self.token.key, 
+            'user_data': user_serializer.data,
+            'token_key':  self.token.key, 
         }
 
         invalid_expected_response_dict = {
@@ -235,10 +223,145 @@ class TestUserView(TestCase):
             'errors': {'Authorization': ("You are not authorized to change this object.",'unauthorized')}
         }
 
-        self.assertEquals(unauthorized_response.status_code, 401)
         self.assertEquals(valid_data_response.status_code, 200)
         self.assertEquals(invalid_data_response.status_code, 400)
         self.assertEquals(unauthorized_user_response.status_code, 401)
         self.assertDictEqual(valid_data_response.data, valid_expected_response_dict)    
         self.assertDictEqual(invalid_data_response.data, invalid_expected_response_dict)  
         self.assertDictEqual(unauthorized_user_response.data, unauthorized_user_expected_responce_dict)           
+
+class TestChats(TestCase):
+    """
+    This class tests the chats view.
+    """
+    def setUp(self):
+        """
+        This function defines the set up required to test the chats view.
+        """
+        self.client = APIClient()
+        self.user1 = get_user_model().objects.create_user(
+            first_name = 'test', 
+            last_name = 'test', 
+            user_name = 'test', 
+            email_address = 'test@test.com', 
+            password = 'password'
+            )
+        self.user2 = get_user_model().objects.create_user(
+            first_name = 'test2', 
+            last_name = 'test2', 
+            user_name = 'test2', 
+            email_address = 'test2@test.com', 
+            password = 'password2'
+            )
+        self.user3 = get_user_model().objects.create_user(
+            first_name = 'test3', 
+            last_name = 'test3', 
+            user_name = 'test3', 
+            email_address = 'test3@test.com', 
+            password = 'password3'
+            )
+        self.token = Token.objects.create(user=self.user1)
+        self.url = reverse('chats')
+        self.maxDiff = None
+
+    def test_chats_view_GET(self):
+        """
+        This function tests the get method of the chats view.
+        It asserts if the chats view returns ok when the user_id of another user is passed as an argument.
+        It asserts if the update user view returns a dictionary that contains the expected key value pairs the information provided is valid.
+        """
+
+        chat1 = Chat.objects.create()
+        Participant.objects.create(chat = chat1, model_user = self.user1)
+        Participant.objects.create(chat = chat1, model_user = self.user2)
+  
+        chat2 = Chat.objects.create()
+        Participant.objects.create(chat = chat2, model_user = self.user1)
+        Participant.objects.create(chat = chat2, model_user = self.user3)
+                
+        response = self.client.get(self.url, **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
+
+        chats = Chat.objects.filter(participants__model_user = self.user1).all()
+
+        chats_serializer = ChatSerializer(chats, many = True)
+
+        expected_response_dict = {
+            'user_chats': chats_serializer.data
+        }
+
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(response.data, expected_response_dict)
+
+    def test_chats_view_POST(self):
+        """
+        This function tests the get method of the chats view.
+        It asserts if the chats view returns ok when valid information is submitted.
+        It asserts if the chats view returns bad request when invalid information is submitted.
+        It asserts if the chats view returns bad request when a existing user email is is submitted.
+        It asserts if the chats view returns bad request when the email of thee user that is making the request is submitted.
+        It asserts if the chats view returns a dictionary that contains the expected key value pairs the information provided is valid.
+        It asserts if the chats view returns a dictionary that contains the expected key value pairs the information provided is invalid.
+        It asserts if the chats view returns a dictionary that contains the expected key value pairs the information provided belongs to an existing user.  
+        It asserts if the chats view returns a dictionary that contains the expected key value pairs the information provided belongs to the user making the request.
+        """
+        
+        existing_chat = Chat.objects.create()
+        Participant.objects.create(chat = existing_chat, model_user = self.user1)
+        Participant.objects.create(chat = existing_chat, model_user = self.user3)
+
+        valid_request_dict = {
+            'display_name': 'test-name',
+            'email_address': 'test2@test.com'
+        }
+
+        invalid_request_dict = {
+            'display_name': 'test-name',
+            'email_address': 'not an email'
+        }
+
+        existing_user_request_dict = {
+            'display_name': 'test-name',
+            'email_address': 'test3@test.com'
+        }
+
+        same_user_request_dict = {
+            'display_name': 'test-name',
+            'email_address': 'test@test.com'
+        }
+
+        valid_data_response = self.client.post(self.url, data=valid_request_dict, **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})   
+        invalid_data_response = self.client.post(self.url, data=invalid_request_dict, **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
+        exisiting_user_data_response = self.client.post(self.url, data=existing_user_request_dict, **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
+        same_user_data_response = self.client.post(self.url, data=same_user_request_dict, **{'HTTP_AUTHORIZATION': f'token {self.token.key}'})
+ 
+        invalid_request_serializer = CreateChatSerializer(data=invalid_request_dict)
+        invalid_request_serializer.is_valid()
+ 
+        chat = Chat.objects.get(participants__model_user = self.user2)
+
+        chat_serializer = ChatSerializer(chat)
+
+        valid_expected_response_dict = {
+            'chat_data': chat_serializer.data
+        }
+        
+        invalid_expected_response_dict = {
+            'errors': invalid_request_serializer.errors
+        }
+
+        existing_user_expected_response_dict = {
+            'errors': {'Model': ('This chat aldready exists.','already exists')}
+        }
+
+        same_user_expected_response_dict = {
+            'errors':{'Field': ("You can't be in a chat with yourself.",'field conflict')}
+        }
+
+        self.assertEqual(valid_data_response.status_code, 201)
+        self.assertEqual(invalid_data_response.status_code, 400)
+        self.assertEqual(exisiting_user_data_response.status_code, 400)
+        self.assertEqual(same_user_data_response.status_code, 400)
+        self.assertDictEqual(valid_data_response.data, valid_expected_response_dict)
+        self.assertDictEqual(invalid_data_response.data, invalid_expected_response_dict)
+        self.assertDictEqual(exisiting_user_data_response.data, existing_user_expected_response_dict)
+        self.assertDictEqual(same_user_data_response.data, same_user_expected_response_dict)  
