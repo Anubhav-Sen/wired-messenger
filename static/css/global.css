@@ -220,3 +220,13 @@ body {
     background-position: center;
     background-repeat: no-repeat;
 }
+
+.delete-icon {
+    height: 16px;
+    width: 16px;
+    display: block;
+    background-image: url(../assets/delete-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}

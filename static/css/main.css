@@ -95,7 +95,7 @@
     margin-left: auto;
 }
 
-#profile-side-area {
+#profile-side-area, #chat-participant-profile-side-area {
     height: 100%;
     width: 100%;
     grid-area: side-area;
@@ -108,18 +108,18 @@
     overflow-y: scroll;
 }
 
-#profile-information {
+#profile-information, #chat-participant-profile-information {
     display: flex;
     flex-direction: inherit;
     align-items: inherit;
 }
 
-#profile-information span:nth-of-type(1){
+#profile-information span:nth-of-type(1), #chat-participant-profile-information span:nth-of-type(1){
     font-size: 24px;
     font-weight: 700;
 }
 
-#profile-information span:nth-of-type(3){
+#profile-information span:nth-of-type(3), #chat-participant-profile-information span:nth-of-type(3){
     font-size: 14px;
     margin-top: 16px;
 }

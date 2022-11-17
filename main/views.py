@@ -8,7 +8,7 @@ from . forms import *
 from . custom_decorators import login_required
 
 @login_required(login_url='login')
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(['GET', 'POST', 'DELETE'])
 def index_view(request):
     """
     This function defines the main view of the application.
@@ -36,6 +36,19 @@ def index_view(request):
         'edit_chat_form': edit_chat_form, 
     }
 
+    if request.method == 'DELETE':
+
+        chat_id = request.headers.get('Chat-Id')
+        print(chat_id)
+
+        chat_uri = f'{request.scheme}://{request.get_host()}/api/chats/{chat_id}' 
+
+        chat_post_responce = requests.delete(chat_uri, headers=headers)
+
+        if chat_post_responce.status_code == 200:
+
+            return HttpResponse(status=200)
+        
     if request.method == 'POST' and request.headers.get('Index-Page-Form') == 'create-chat-form':
         
         display_name = request.POST.get('display_name')
@@ -58,6 +71,33 @@ def index_view(request):
             for value in chats_post_dict['errors'].values():
                 
                 return JsonResponse({'error': '*' + str(value[0])}, status=400)
+    
+    elif request.method == 'POST' and request.headers.get('Index-Page-Form') == 'edit-chat-form':
+  
+        chat_id = request.headers.get('Chat-Id')
+        chat_uri = f'{request.scheme}://{request.get_host()}/api/chats/{chat_id}'
+
+        display_name = request.POST.get('display_name')
+
+        request_dict = {
+            'display_name': display_name,
+        }
+        
+        chat_post_responce = requests.patch(chat_uri, json=request_dict, headers=headers)
+        chat_post_dict = json.loads(chat_post_responce.content)
+   
+        if chat_post_responce.status_code == 200:
+
+            display_name = chat_post_dict['chat_data']['display_name']
+            
+            return JsonResponse({'display_name': display_name}, status=200)
+
+        elif chat_post_responce.status_code == 400:
+            
+            for value in chat_post_dict['errors'].values():
+                
+                return JsonResponse({'error': '*' + str(value[0])}, status=400)
+
 
     if request.method == 'GET' and request.headers.get('Partial-Template') == 'profile-side-area':
 
@@ -79,7 +119,7 @@ def index_view(request):
         chat_get_responce = requests.get(chat_uri, headers=headers)
         chat_get_dict = json.loads(chat_get_responce.content)
 
-        context['chat'] = chat_get_dict
+        context['chat'] = chat_get_dict['chat_data']
         
         return render(request, "chat-window.html", context)
     
@@ -95,7 +135,7 @@ def index_view(request):
         chat_get_responce = requests.get(chat_uri, headers=headers)
         chat_get_dict = json.loads(chat_get_responce.content)
 
-        context['chat'] = chat_get_dict
+        context['chat'] = chat_get_dict['chat_data']
     
         return render(request, "chat-participant-profile.html", context)
     

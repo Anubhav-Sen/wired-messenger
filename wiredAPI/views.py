@@ -93,7 +93,7 @@ def user(request, user_id):
         user_serializer = UserSerializer(user)
 
         if user:
-            return Response(user_serializer.data, status=status.HTTP_200_OK)
+            return Response({'user_data': user_serializer.data}, status=status.HTTP_200_OK)
 
         else:
             return Response({'errors': {'Resource': ('This user does not exist.', 'dose not exist')}}, status=status.HTTP_404_NOT_FOUND)
@@ -101,6 +101,12 @@ def user(request, user_id):
     elif request.method == 'PATCH':
 
         current_user = request.user
+
+        user = get_user_model().objects.filter(user_id = user_id).first()
+
+        if not user:
+
+            return Response({'errors': {'Resource': ('This user does not exist.', 'dose not exist')}}, status=status.HTTP_404_NOT_FOUND)
 
         if current_user.user_id == user_id:
 
@@ -136,6 +142,7 @@ def user(request, user_id):
         
         else:
             return Response({'errors': {'Authorization': ("You are not authorized to change this object.",'unauthorized')}}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 @api_view(['GET','POST'])
 @authentication_classes([TokenAuthentication])
@@ -179,7 +186,11 @@ def chats(request):
                 if existing_chat:
                     
                     return Response({'errors': {'Model': ('This chat aldready exists.','already exists')}}, status=status.HTTP_400_BAD_REQUEST)
-            
+
+                if not display_name:
+
+                    display_name = user.user_name
+
                 chat = Chat.objects.create(display_name = display_name)
 
                 Participant.objects.create(model_user = request.user, chat = chat)
@@ -196,7 +207,7 @@ def chats(request):
             return Response({'errors': create_chat_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET','POST'])
+@api_view(['GET','PATCH','DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def chat(request, chat_id):
@@ -214,10 +225,59 @@ def chat(request, chat_id):
         chat_serializer = ChatSerializer(user_chat)
 
         if chat and user_chat:
-            return Response(chat_serializer.data, status=status.HTTP_200_OK)
+            return Response({'chat_data':chat_serializer.data}, status=status.HTTP_200_OK)
         
         elif chat and not user_chat:
             return Response({'errors':{'Authorization':('You are not authorized to view this object.', 'unauthorized')}}, status=status.HTTP_404_NOT_FOUND)
+
+        else:
+            return Response({'errors':{'Resource':('This chat does not exist.', 'does not exist')}}, status=status.HTTP_401_UNAUTHORIZED)
+
+    if request.method == 'PATCH':
+
+        display_name = request.data.get('display_name')
+
+        chat = Chat.objects.filter(chat_id = chat_id).first()
+        user_chat = Chat.objects.filter(participants__model_user = request.user).filter(chat_id = chat_id).first()
+    
+        if chat and user_chat:
+            
+            update_chat_serializer = UpdateChatSerializer(data=request.data)
+        
+            if update_chat_serializer.is_valid():
+
+                user_chat.display_name = display_name
+                user_chat.save()
+   
+                chat_serializer = ChatSerializer(user_chat)
+
+                return Response({'chat_data': chat_serializer.data}, status=status.HTTP_200_OK)
+
+            else:
+                return Response({'errors': update_chat_serializer.errors}, status=status.HTTP_404_NOT_FOUND)
+
+        elif chat and not user_chat:
+            
+            return Response({'errors':{'Authorization':('You are not authorized to update this object.', 'unauthorized')}}, status=status.HTTP_404_NOT_FOUND)
+
+        else:
+            return Response({'errors': {'Resource': ('This chat does not exist.', 'dose not exist')}}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'DELETE':
+
+        chat = Chat.objects.filter(chat_id = chat_id).first()
+        user_chat = Chat.objects.filter(participants__model_user = request.user).filter(chat_id = chat_id).first()
+
+        chat_display_name = user_chat.display_name
+
+        if chat and user_chat:
+
+            user_chat.delete()
+
+            return Response({'message': f'The chat object {chat_display_name} has been deleted.'}, status=status.HTTP_200_OK)
+        
+        elif chat and not user_chat:
+            return Response({'errors':{'Authorization':('You are not authorized to delete this object.', 'unauthorized')}}, status=status.HTTP_404_NOT_FOUND)
 
         else:
             return Response({'errors':{'Resource':('This chat does not exist.', 'does not exist')}}, status=status.HTTP_401_UNAUTHORIZED)

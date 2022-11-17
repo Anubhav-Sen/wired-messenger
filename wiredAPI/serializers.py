@@ -69,7 +69,7 @@ class ChatParticipantSerializer(serializers.ModelSerializer):
     model_user = UserSerializer()
 
     class Meta:
-        model = Participant()
+        model = Participant
         fields = ['model_user'] 
 
 class ChatSerializer(serializers.ModelSerializer):
@@ -80,9 +80,20 @@ class ChatSerializer(serializers.ModelSerializer):
     participants = ChatParticipantSerializer(many=True)
 
     class Meta:
-        model = Chat()
+        model = Chat
         fields = [   
             'chat_id',
             'display_name',
             'participants'
+        ]
+
+class UpdateChatSerializer(serializers.ModelSerializer):
+    """
+    This class serializes the update fields of the chat model into a python dictionary.
+    It also validates fields passed to it.
+    """     
+    class Meta:
+        model = Chat
+        fields = [   
+            'display_name',
         ]

@@ -142,7 +142,7 @@ function switchToCreateChatSideArea(sideareaheader, sidearea) {
     };
 };
 
-function switchToChatListSideArea(sideareaheader, sidearea) {
+function switchToChatListSideArea(sideareaheader, sidearea, callBack) {
 
     //This function switches the profile side area to the chat-list side area.
     //It sends a get request to the index route of the application with a custom header.
@@ -153,6 +153,7 @@ function switchToChatListSideArea(sideareaheader, sidearea) {
     //It sets an event listener on the user action button with the addEventListenerToActionsButton function.
     //It sets an event listener on the edit profile button to redirect to the edit profile view.
     //It sets an event listener on the log out button to redirect to the logout view.
+    //It calls a callBack function passed to it.
 
     xhr.open('GET', window.location.href);
     xhr.responseType = 'document';
@@ -193,6 +194,11 @@ function switchToChatListSideArea(sideareaheader, sidearea) {
 
             editProfileBtn.addEventListener('click', function(){redirectFromOrigin('/edit-profile')});
             logOutBtn.addEventListener('click', function(){redirectFromOrigin('/logout')});
+
+            if (callBack) {
+                
+                callBack();
+            };
         };
     };
 };
@@ -388,6 +394,7 @@ function switchChatWindow() {
             let chatWindowBackBtn = document.getElementById('chat-window-back-btn');
             let chatWindowProfileBtn = document.getElementById('chat-window-profile-btn');
             let chatWindowEditChatBtn = document.getElementById('chat-window-edit-chat-btn');
+            let chatWindowDeleteChatBtn = document.getElementById('chat-window-delete-chat-btn');
             let messageTextInput = document.querySelector('#message-form textarea');  
                     
             chatWindowProfileBtn.addEventListener('click', function() {
@@ -396,6 +403,7 @@ function switchChatWindow() {
                 let docProfileSideArea = document.getElementById('profile-side-area');    
                 let docCreateChatSideArea = document.getElementById('create-chat-side-area');
                 let docChatListSideArea = document.getElementById('chat-list-side-area'); 
+                let docEditChatSideArea = document.getElementById('edit-chat-side-area'); 
 
                 if (docProfileSideArea) { 
                     
@@ -417,6 +425,13 @@ function switchChatWindow() {
                     docChatListSideArea = document.getElementById('chat-list-side-area');    
                             
                     switchToChatParticipantProfileSideArea(this, docSideAreaHeader, docChatListSideArea, switchToChatListSideArea);
+                }
+                else if (docEditChatSideArea) { 
+                    
+                    docSideAreaHeader = document.getElementById('side-area-header');
+                    docEditChatSideArea = document.getElementById('edit-chat-side-area'); 
+                            
+                    switchToChatParticipantProfileSideArea(this, docSideAreaHeader, docEditChatSideArea, switchToChatListSideArea);
                 };
             });
 
@@ -426,6 +441,7 @@ function switchChatWindow() {
                 let docProfileSideArea = document.getElementById('profile-side-area');    
                 let docCreateChatSideArea = document.getElementById('create-chat-side-area');
                 let docChatListSideArea = document.getElementById('chat-list-side-area'); 
+                let docChatParticipantProfileSideArea = document.getElementById('chat-participant-profile-side-area'); 
 
                 if (docProfileSideArea) { 
                     
@@ -447,7 +463,19 @@ function switchChatWindow() {
                     docChatListSideArea = document.getElementById('chat-list-side-area');    
                             
                     switchToEditChatSideArea(this, docSideAreaHeader, docChatListSideArea, switchToChatListSideArea);
+                }
+                else if (docChatParticipantProfileSideArea) { 
+                    
+                    docSideAreaHeader = document.getElementById('side-area-header');  
+                    docChatParticipantProfileSideArea = document.getElementById('chat-participant-profile-side-area'); 
+                            
+                    switchToEditChatSideArea(this, docSideAreaHeader, docChatParticipantProfileSideArea, switchToChatListSideArea);
                 };
+            });
+
+            chatWindowDeleteChatBtn.addEventListener('click', function() {
+
+                deleteChat(this);
             });
 
             addEventListenerToActionsButton(chatWindowActionsButton);
@@ -484,7 +512,7 @@ function switchToChatWindowClosed() {
     };
 };
 
-function switchToChatParticipantProfileSideArea(element, sideareaheader, sidearea, switchfunction) {
+function switchToChatParticipantProfileSideArea(element, sideareaheader, sidearea, switchfunction = null) {
 
     //This function switches the current side area to the chat participant profile side area.
     //It sends a get request to the index route of the application with a custom header.
@@ -502,26 +530,27 @@ function switchToChatParticipantProfileSideArea(element, sideareaheader, sideare
         if (xhr.readyState == 4 && xhr.status == 200) {
 
             let newSideAreaHeader = xhr.responseXML.getElementById('side-area-header');
-            let newProfileSideArea = xhr.responseXML.getElementById('profile-side-area');             
-            
+            let newChatParticipantProfileSideArea = xhr.responseXML.getElementById('chat-participant-profile-side-area');             
+                        
             sideareaheader.parentNode.replaceChild(newSideAreaHeader, sideareaheader);
-            sidearea.parentNode.replaceChild(newProfileSideArea, sidearea);
-
-            let profileBackBtn = document.getElementById('profile-back-btn');
+            sidearea.parentNode.replaceChild(newChatParticipantProfileSideArea, sidearea);
+            
+            let chatParticipantProfileBackBtn = document.getElementById('chat-participant-profile-back-btn');
             let docSideAreaHeader = document.getElementById('side-area-header'); 
-            let docProfileSideArea = document.getElementById('profile-side-area'); 
+            let docChatParticipantProfileSideArea = document.getElementById('chat-participant-profile-side-area');
 
-            profileBackBtn.addEventListener('click', function() {switchfunction(docSideAreaHeader, docProfileSideArea);});    
+            chatParticipantProfileBackBtn.addEventListener('click', function() {switchfunction(docSideAreaHeader, docChatParticipantProfileSideArea);});                
         };
     };
 };
 
-function switchToEditChatSideArea(element, sideareaheader, sidearea, switchfunction) {
+function switchToEditChatSideArea(element, sideareaheader, sidearea, switchfunction = null) {
 
     //This function switches the current side area to the edit chat side area.
     //It sends a get request to the index route of the application with a custom header.
     //It recieves the rendered html fragment for the edit chat side area from the backend and replaces the current side area with it.
     //It sets an event listener on the profile back button to call the switch function.
+    //It sets an event listener on the edit chat form button to call the submitEditChatForm function.
 
     xhr.open('GET', window.location.href);
     xhr.responseType = 'document';
@@ -538,12 +567,93 @@ function switchToEditChatSideArea(element, sideareaheader, sidearea, switchfunct
             
             sideareaheader.parentNode.replaceChild(newSideAreaHeader, sideareaheader);
             sidearea.parentNode.replaceChild(newEditChatSideArea, sidearea);
-
+            
             let editChatBackBtn = document.getElementById('edit-chat-back-btn');
             let docSideAreaHeader = document.getElementById('side-area-header'); 
-            let docEditChatSideArea = document.getElementById('edit-chat-side-area'); 
+            let docEditChatSideArea = document.getElementById('edit-chat-side-area');
+            let editChatFormBtn = document.getElementById('edit-chat-form-button');
 
-            editChatBackBtn.addEventListener('click', function() {switchfunction(docSideAreaHeader, docEditChatSideArea);});    
+            editChatBackBtn.addEventListener('click', function() {
+                
+                switchfunction(docSideAreaHeader, docEditChatSideArea);
+            });
+
+            editChatFormBtn.addEventListener('click', function(event) {
+
+                submitEditChatForm(event, this)
+            });
+        };
+    };
+};
+
+function submitEditChatForm(event, element) {
+
+    //This function submits the edit chat form.
+    //It prevents the submit button default which is to reload the page on submit.
+    //It sends a post request to the index route of the application with a custom header.
+    //It receives status code 200 from the backend if valid form data is submitted else it receives status code 400.
+    //If the status code is 200 it receivies a json dictionary with a new display name, it replaces the chat window title with it.
+    //It also calls the switchToChatListSideArea function,
+    //If the status code is 400 it receivies a json dictionary with an error message, it displays this error in the form error element.
+
+    let editChatForm = document.getElementById('edit-chat-form');
+    let formData = new FormData(editChatForm); 
+
+    xhr.open('POST', window.location.href);
+    xhr.responseType = 'json';
+    xhr.setRequestHeader('Index-Page-Form', 'edit-chat-form');
+    xhr.setRequestHeader('Chat-Id', element.getAttribute('data-chat-id'));
+    xhr.send(formData);
+
+    xhr.onload = function() {
+
+        if (xhr.readyState == 4 && xhr.status == 200) {
+
+            let sideAreaHeader = document.getElementById('side-area-header');
+            let editChatSideArea = document.getElementById('edit-chat-side-area');
+            let display_name = xhr.response['display_name'];
+            let chatAreaHeaderTitle = document.querySelector('#chat-area-header #title');
+
+            chatAreaHeaderTitle.innerHTML = display_name
+
+            switchToChatListSideArea(sideAreaHeader, editChatSideArea);
+        }
+        
+        else if (xhr.readyState == 4 && xhr.status == 400) {
+            
+            let error = xhr.response['error'];
+            let editChatFormError = document.getElementById('edit-chat-form-error');
+
+            editChatFormError.innerHTML = error;
+        };
+    };  
+
+    event.preventDefault();
+};
+
+function deleteChat(element) {
+
+    //This function switches sends a request to the index route of the application with a cutom header to delete a chat.
+    //Once it recieves confirmation that deletion is complete it calles the switchToChatListSideArea function with switchToChatWindowClosed as a callback.  
+    
+    Cookies = window.Cookies;
+
+    const csrftoken = Cookies.get('csrftoken');
+
+    xhr.open('DELETE', window.location.href);
+    xhr.responseType = 'document';
+    xhr.setRequestHeader('X-CSRFToken', csrftoken)
+    xhr.setRequestHeader('Chat-Id', element.getAttribute('data-chat-id'));
+    xhr.send();
+
+    xhr.onload = function() {
+
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            
+            let sideAreaHeader = document.getElementById('side-area-header');
+            let chatListSideArea = document.getElementById('chat-list-side-area');
+            
+            switchToChatListSideArea(sideAreaHeader, chatListSideArea, switchToChatWindowClosed);               
         };
     };
 };

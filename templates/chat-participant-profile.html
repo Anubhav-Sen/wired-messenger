@@ -4,7 +4,7 @@
 
         {% if participant.model_user.user_id != request.session.user_data.user_id %}
 
-            <button id="profile-back-btn" class="round-btn"><i class="back-icon"></i></button>
+            <button id="chat-participant-profile-back-btn" class="round-btn"><i class="back-icon"></i></button>
 
             {% if chat.display_name %}
 
@@ -22,19 +22,19 @@
     
 </div>
 
-<div id="profile-side-area">
+<div id="chat-participant-profile-side-area">
 
     {% for participant in chat.participants %}
   
         {% if participant.model_user.user_id != request.session.user_data.user_id %}
 
             {% if participant.model_user.display_pic %}
-                <img id="display-pic-edit-profile" class="display-pic-img-large" src="{{participant.model_user.display_pic}}"></img>
+                <img class="display-pic-img-large" src="{{participant.model_user.display_pic}}"></img>
             {% else %}
                 <div class="display-pic-placeholder-large"><span>{{participant.model_user.user_name.0 | upper}}</span></div>
             {% endif %}
 
-            <div id="profile-information">
+            <div id="chat-participant-profile-information">
 
                 <span>{{participant.model_user.user_name}}</span>
 
