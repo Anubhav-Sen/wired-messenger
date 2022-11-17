@@ -95,18 +95,6 @@
     margin-left: auto;
 }
 
-#chat-area-header{
-    height: 100%;
-    width: 100%;
-    grid-area: chat-area-header;
-}
-
-#chat-area {
-    height: 100%;
-    width: 100%;
-    grid-area: chat-area;
-}
-
 #profile-side-area {
     height: 100%;
     width: 100%;
@@ -136,7 +124,7 @@
     margin-top: 16px;
 }
 
-#create-chat-side-area { 
+#create-chat-side-area, #edit-chat-side-area { 
     height: 100%;
     width: 100%;
     grid-area: side-area;
@@ -147,3 +135,68 @@
     padding: 40px 40px 0 40px;
     overflow-y: scroll;
 }
+
+#chat-area-header{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 16px;
+    grid-area: chat-area-header;
+}
+
+#chat-area-header #title {
+    font-weight: 600;
+}
+
+#chat-area-header #chat-window-actions-btn-dropdown-container {
+    margin-left: auto;
+}
+
+#chat-area {
+    height: 100%;
+    width: 100%;
+    grid-area: chat-area;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+#message-bar {
+    min-height: 80px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 24px 40px;
+}
+
+#message-form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+#message-form textarea {    
+    width: 100%;
+    border: 1px solid #d3d3d3;
+    border-radius: 24px;
+    outline: none;
+    resize: none;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 16px;
+    box-sizing: border-box;
+    padding: 16px 24px;
+}
+
+#chats-closed-message {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    font-weight: 600;
+    font-size: 24px;
+    place-items: center;
+}
+

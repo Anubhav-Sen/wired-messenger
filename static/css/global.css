@@ -33,6 +33,7 @@ body {
     border: 1px solid #d3d3d3;
     border-radius: 8px;
     background-color: white;
+    z-index: 2;
 }
 
 .dropdown button {
@@ -205,6 +206,16 @@ body {
     width: 100%;
     display: block;
     background-image: url(../assets/chat-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.send-icon {
+    height: 100%;
+    width: 100%;
+    display: block;
+    background-image: url(../assets/send-icon.svg);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;

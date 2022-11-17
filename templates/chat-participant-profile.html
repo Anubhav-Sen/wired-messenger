@@ -1,0 +1,55 @@
+<div id="side-area-header">
+    
+    {% for participant in chat.participants %}
+
+        {% if participant.model_user.user_id != request.session.user_data.user_id %}
+
+            <button id="profile-back-btn" class="round-btn"><i class="back-icon"></i></button>
+
+            {% if chat.display_name %}
+
+                <span id="title">{{chat.display_name}}</span>
+
+            {% else %}
+
+                <span id="title">{{participant.model_user.user_name}}</span>
+
+            {% endif %}
+            
+        {% endif %}
+
+    {% endfor %}
+    
+</div>
+
+<div id="profile-side-area">
+
+    {% for participant in chat.participants %}
+  
+        {% if participant.model_user.user_id != request.session.user_data.user_id %}
+
+            {% if participant.model_user.display_pic %}
+                <img id="display-pic-edit-profile" class="display-pic-img-large" src="{{participant.model_user.display_pic}}"></img>
+            {% else %}
+                <div class="display-pic-placeholder-large"><span>{{participant.model_user.user_name.0 | upper}}</span></div>
+            {% endif %}
+
+            <div id="profile-information">
+
+                <span>{{participant.model_user.user_name}}</span>
+
+                <span>{{participant.model_user.email_address}}</span>
+
+                {% if participant.model_user.bio %}
+                    <span>{{participant.model_user.bio}}</span>
+                {% else %}
+                    <span>No bio</span>
+                {% endif %}
+                
+            </div>
+        
+        {% endif %}
+        
+    {% endfor %}
+
+</div>

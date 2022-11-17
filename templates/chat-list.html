@@ -30,7 +30,7 @@
          
             {% if participant.model_user.user_id != request.session.user_data.user_id %}
 
-                <div class="chat">
+                <div class="chat" data-chat-id="{{chat.chat_id}}">
 
                     {% if participant.model_user.display_pic %}     
                         <img class='display-pic-img-small' src='{{participant.model_user.display_pic}}'>

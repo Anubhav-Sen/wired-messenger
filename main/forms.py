@@ -42,3 +42,16 @@ class CreateChatForm(forms.Form):
     """
     display_name = forms.CharField(label='Chat display name', label_suffix='', required=False, max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Display name'}))
     email_address = forms.EmailField(label='Chat email address', label_suffix='', max_length=255, widget=forms.TextInput(attrs={'placeholder': 'Email address'})) 
+
+class EditChatForm(forms.Form):
+    """
+    This class defines all of the fields of the edit chat form.
+    """
+    display_name = forms.CharField(label='Chat display name', label_suffix='', required=False, max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Display name'}))
+    
+class MessageForm(forms.Form):
+    """
+    This class defines all of the fields of the message form.
+    """
+    message_text = forms.CharField(label='', required=False, widget=forms.Textarea(attrs={'placeholder': 'Text message', 'id':'message_text_input', 'rows': 1, 'cols': None}))
+

@@ -143,26 +143,26 @@
     color: tomato;
 }
 
-#create-chat-form-container {
+#create-chat-form-container, #edit-chat-form-container {
     width: 100%;
     display: flex;
     flex-direction: column;
 }
 
-#create-chat-form {
+#create-chat-form, #edit-chat-form {
     display: inherit;
     flex-direction: inherit;
     gap: 24px;
 }
 
-#create-chat-form label {
+#create-chat-form label, #edit-chat-form label {
     font-size: 12px;
     font-weight: 700;
     color: #257AFD;
     margin-bottom: -24px;
 }
 
-#create-chat-form input[type="text"] {
+#create-chat-form input[type="text"], #edit-chat-form input[type="text"] {
     height: 40px;
     width: auto;
     font-family: 'IBM Plex Mono', monospace;
@@ -172,16 +172,16 @@
     border-bottom: 2px solid #28282B;
 }
 
-#create-chat-form input[type="text"]:focus {
+#create-chat-form input[type="text"]:focus, #edit-chat-form input[type="text"]:focus {
     border-bottom: 2px solid #257AFD;
 }
 
-#create-chat-form-footer {
+#create-chat-form-footer, #edit-chat-form-footer{
     display: inherit;
     flex-direction: inherit;
 }
 
-#create-chat-form-footer button {
+#create-chat-form-footer button, #edit-chat-form-footer button {
     height: 40px;
     width: auto;
     font-family: 'IBM Plex Mono', monospace;
@@ -193,11 +193,11 @@
     background-color: #28282B;
 }
 
-#create-chat-form-footer button:active {
+#create-chat-form-footer button:active, #edit-chat-form-footer button:active {
     background-color: #38383B;
 }
 
-#create-chat-form-error {
+#create-chat-form-error, #edit-chat-form-error {
     min-height: 24px;
     display: inherit;
     flex-direction: inherit;

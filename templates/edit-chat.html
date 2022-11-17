@@ -1,0 +1,38 @@
+<div id="side-area-header">
+
+    <button id="edit-chat-back-btn" class="round-btn"><i class="back-icon"></i></button>
+    
+    <span id="title">Edit chat</span>
+
+</div>
+
+<div id="edit-chat-side-area">
+
+    <div id="edit-chat-form-container">
+
+        <form id="edit-chat-form" method="POST">
+        
+            {% csrf_token %}
+            {{ edit_chat_form }}
+    
+        </form>
+
+        <div id="edit-chat-form-footer">
+
+            <div id="edit-chat-form-error">
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <span>{{ message }}</span>
+                    {% endfor %}
+                {% endif %}
+                
+            </div>
+        
+            <button id='edit-chat-form-button' form="edit-chat-form">Create</button>
+
+        </div>
+ 
+    </div>
+   
+</div>

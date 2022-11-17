@@ -3,6 +3,7 @@ import json
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
+from django.http import JsonResponse, HttpResponse
 from . forms import *
 from . custom_decorators import login_required
 
@@ -22,16 +23,20 @@ def index_view(request):
     
     chats_get_responce = requests.get(chats_uri, headers=headers)
     chats_get_dict = json.loads(chats_get_responce.content)
-    
+
     create_chat_form = CreateChatForm()
+    edit_chat_form = EditChatForm()
+    message_form = MessageForm()
 
     context = {
         'user_data': user_data,
         'chats': chats_get_dict,
         'create_chat_form': create_chat_form,
+        'message_form': message_form,
+        'edit_chat_form': edit_chat_form, 
     }
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.headers.get('Index-Page-Form') == 'create-chat-form':
         
         display_name = request.POST.get('display_name')
         email_address = request.POST.get('email_address')
@@ -43,14 +48,17 @@ def index_view(request):
         
         chats_post_responce = requests.post(chats_uri, json=request_dict, headers=headers)
         chats_post_dict = json.loads(chats_post_responce.content)
+   
+        if chats_post_responce.status_code == 201:
 
-        if chats_post_responce.status_code == 400:
+            return HttpResponse(status=200)
+
+        elif chats_post_responce.status_code == 400:
             
             for value in chats_post_dict['errors'].values():
+                
+                return JsonResponse({'error': '*' + str(value[0])}, status=400)
 
-                messages.error(request, '*' + str(value[0]))
-                break
-        
     if request.method == 'GET' and request.headers.get('Partial-Template') == 'profile-side-area':
 
         return render(request, "profile.html", context)
@@ -62,7 +70,43 @@ def index_view(request):
     elif request.method == 'GET' and request.headers.get('Partial-Template') == 'create-chat-side-area':
         
         return render(request, "create-chat.html", context)
+    
+    elif request.method == 'GET' and request.headers.get('Partial-Template') == 'chat-window':
+        
+        chat_id = request.headers.get('Chat-Id')
+        chat_uri = f'{request.scheme}://{request.get_host()}/api/chats/{chat_id}'
+        
+        chat_get_responce = requests.get(chat_uri, headers=headers)
+        chat_get_dict = json.loads(chat_get_responce.content)
 
+        context['chat'] = chat_get_dict
+        
+        return render(request, "chat-window.html", context)
+    
+    elif request.method == 'GET' and request.headers.get('Partial-Template') == 'chat-window-closed':
+        
+        return render(request, "chat-window-closed.html", context)
+
+    elif request.method == 'GET' and request.headers.get('Partial-Template') == 'chat-participant-profile-side-area':
+
+        chat_id = request.headers.get('Chat-Id')
+        chat_uri = f'{request.scheme}://{request.get_host()}/api/chats/{chat_id}'
+        
+        chat_get_responce = requests.get(chat_uri, headers=headers)
+        chat_get_dict = json.loads(chat_get_responce.content)
+
+        context['chat'] = chat_get_dict
+    
+        return render(request, "chat-participant-profile.html", context)
+    
+    elif request.method == 'GET' and request.headers.get('Partial-Template') == 'edit-chat-side-area':
+
+        chat_id = request.headers.get('Chat-Id')
+
+        context['chat_id'] = chat_id
+    
+        return render(request, "edit-chat.html", context)
+        
     else:
         return render(request, "index.html", context)
 

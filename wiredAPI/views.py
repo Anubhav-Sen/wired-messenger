@@ -81,18 +81,23 @@ def user(request, user_id):
     """
     This function defines the GET request to "user/<int:user_id>" endpoint. 
     It serves an user object in JSON for a given user_id provided to it.
+    If the user dosen't exist the endpoint returns a JSON dictionary of erros.
     This function also defines the PATCH request to "users/<int:user_id>" endpoint.
     It uses its request data to update and existing user and returns the updated user object as a responce.
     In case there is an error while updating an user the endpoint returns a JSON dictionary of errors as a responce.
     """
     if request.method == 'GET':
 
-        user = get_user_model().objects.get(user_id = user_id)
+        user = get_user_model().objects.filter(user_id = user_id).first()
 
         user_serializer = UserSerializer(user)
 
-        return Response(user_serializer.data, status=status.HTTP_200_OK)
-    
+        if user:
+            return Response(user_serializer.data, status=status.HTTP_200_OK)
+
+        else:
+            return Response({'errors': {'Resource': ('This user does not exist.', 'dose not exist')}}, status=status.HTTP_404_NOT_FOUND)
+
     elif request.method == 'PATCH':
 
         current_user = request.user
@@ -137,7 +142,10 @@ def user(request, user_id):
 @permission_classes([IsAuthenticated])
 def chats(request):
     """
-    This function defines POST requests to the "chats" endpoint.
+    This function defines GET requests to the "chats" endpoint.
+    It uses the requests user to filter chats and sends back all of the users chats in JSON.
+    If the user has no chats the endpoint returns a JSON dictionary of errors.
+    This also function defines POST requests to the "chats" endpoint.
     It uses its request data to create a new chat and returns the created chat object as a responce.
     In case there is an error while creating a chat the endpoint returns a JSON dictionary of errors as a responce.
     """
@@ -147,7 +155,11 @@ def chats(request):
 
         chat_serializer = ChatSerializer(chats, many=True)
 
-        return Response({'user_chats': chat_serializer.data}, status=status.HTTP_200_OK)
+        if chats:
+            return Response({'user_chats': chat_serializer.data}, status=status.HTTP_200_OK)
+    
+        else:
+            return Response({'errors': {'Resource':('This user has no chats.', 'does not exist')}}, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'POST':
 
@@ -182,3 +194,30 @@ def chats(request):
         
         else:
             return Response({'errors': create_chat_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET','POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def chat(request, chat_id):
+    """
+    This function defined GET requests to the "chats/<int:chat_id>".
+    It returns serves a chat object in JSON for a given chat_id. 
+    It filters the chat using both the request user and the chat_id as not to allow unauthorized users to access a chat.
+    If the chat does not exist or the user is unauthorized the endpoint returns a json dictionary of errors.
+    """
+    if request.method == 'GET':
+        
+        chat = Chat.objects.filter(chat_id = chat_id).first()
+        user_chat = Chat.objects.filter(participants__model_user = request.user).filter(chat_id = chat_id).first()
+
+        chat_serializer = ChatSerializer(user_chat)
+
+        if chat and user_chat:
+            return Response(chat_serializer.data, status=status.HTTP_200_OK)
+        
+        elif chat and not user_chat:
+            return Response({'errors':{'Authorization':('You are not authorized to view this object.', 'unauthorized')}}, status=status.HTTP_404_NOT_FOUND)
+
+        else:
+            return Response({'errors':{'Resource':('This chat does not exist.', 'does not exist')}}, status=status.HTTP_401_UNAUTHORIZED)

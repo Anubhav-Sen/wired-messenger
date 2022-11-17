@@ -1,0 +1,54 @@
+<div id="chat-area-header">
+    
+    {% for participant in chat.participants %}
+
+        {% if participant.model_user.user_id != request.session.user_data.user_id %}
+
+            <button id="chat-window-back-btn" class="round-btn"><i class="back-icon"></i></button>
+
+            {% if chat.display_name %}
+
+                <span id="title">{{chat.display_name}}</span>
+
+            {% else %}
+
+                <span id="title">{{participant.model_user.user_name}}</span>
+
+            {% endif %}
+        
+            <div id='chat-window-actions-btn-dropdown-container' class="btn-dropdown-container">
+        
+                <button id="chat-window-actions-btn" class="round-btn action-btn"></button>
+        
+                <div class="dropdown dropdown-bottom-left hide">
+                    <button id="chat-window-profile-btn" data-chat-id ="{{chat.chat_id}}"><i class="profile-icon"></i>Profile</button>
+                    <button id="chat-window-edit-chat-btn" data-chat-id ="{{chat.chat_id}}"><i class="edit-icon"></i>Edit chat</button>
+                </div>
+        
+            </div>
+    
+        {% endif %}
+
+    {% endfor %}
+
+</div>
+
+<div id="chat-area">
+
+    <div>
+
+    </div>
+
+    <div id="message-bar">
+
+        <form id='message-form' method="POST">
+            
+            {% csrf_token %}
+            {{ message_form }}
+
+            <button class="round-btn"><i class="send-icon"></i></button>
+
+        </form>
+
+    </div>
+</div>
