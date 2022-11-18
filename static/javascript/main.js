@@ -676,6 +676,11 @@ function deleteChat(element) {
 
 function chatSocket() {
 
+    //This function opens a web socket.
+    //It sends the message written in the message form to the backend.
+    //It creates a new message element for every message that is sent.
+    //It handels the event in which the socket is closed.
+
     let messageForm = document.getElementById('message-form');
     let messageFormTextInput = document.getElementById('message-text-input');
     let messageFormSendBtn = document.getElementById('message-form-send-btn');
@@ -685,8 +690,54 @@ function chatSocket() {
     openSocket = new WebSocket(url);
 
     openSocket.onmessage = function(event) {
+
         let data = JSON.parse(event.data);
-        console.log(data.message)        
+        let messageLog = document.getElementById('message-log');
+        let newMessage = document.createElement('div');
+        let newDisplayPicPlaceholder = document.createElement('div');
+        let newDisplayPic = document.createElement('img');
+        let newMessageContent = document.createElement('div');
+        let newMessageHeader = document.createElement('div');  
+        let newUsername = document.createElement('span');
+        let newDateTime = document.createElement('span');
+        let newMessageText = document.createElement('span');
+        let currentdate = new Date() 
+        let messageDate = currentdate.toLocaleTimeString([], {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'});
+        
+        newMessage.setAttribute('id', 'message');
+        newDisplayPicPlaceholder.setAttribute('class', 'display-pic-placeholder');
+        newDisplayPic.setAttribute('class', 'display-pic-img-small');
+        newMessageContent.setAttribute('id', 'message-content');
+        newMessageHeader.setAttribute('id', 'message-header');
+        newUsername.setAttribute('id', 'username');
+        newDateTime.setAttribute('id', 'message-datetime');
+        newMessageText.setAttribute('id', 'message-text');
+
+        messageLog.prepend(newMessage);
+        newMessage.appendChild(newMessageHeader);
+
+        if (data.user_data.display_pic) {
+            
+            newMessage.appendChild(newDisplayPic);
+            newDisplayPic.src = data.user_data.display_pic
+        } 
+        else {
+            
+            newMessage.appendChild(newDisplayPicPlaceholder);
+            newDisplayPicPlaceholder.innerText = data.user_data.user_name[0].toUpperCase();
+        };
+
+        newMessage.appendChild(newMessageContent);
+        newMessageHeader.appendChild(newUsername);
+        newMessageHeader.appendChild(newDateTime);
+        newMessageContent.appendChild(newMessageHeader);
+        newMessageContent.appendChild(newMessageText);
+
+        newUsername.innerText = data.user_data.user_name;
+        newDateTime.innerText = messageDate;
+        newMessageText.innerText = data.message;
+
+        
     };
 
     openSocket.onclose = function(event) {
@@ -696,6 +747,14 @@ function chatSocket() {
     messageFormSendBtn.addEventListener('click', function(event) {
 
         event.preventDefault();
+        
+        let formData = new FormData(messageForm); 
+        let xhr = new XMLHttpRequest();
+
+        xhr.open('POST', window.location.href);
+        xhr.responseType = 'json';
+        xhr.setRequestHeader('Index-Page-Form', 'message-form');
+        xhr.setRequestHeader('Chat-Id', messageFormSendBtn.getAttribute('data-chat-id'));
 
         let message = messageFormTextInput.value;
         let messageJSON = JSON.stringify({'message': message});
@@ -704,7 +763,11 @@ function chatSocket() {
         messageFormTextInput.focus();
         messageFormTextInput.rows = 1;
 
-        openSocket.send(messageJSON);
+        if (message.trim() != '') {
+            
+            openSocket.send(messageJSON);
+            xhr.send(formData);
+        };
     });
 
     messageFormTextInput.addEventListener('keypress', function(event) {

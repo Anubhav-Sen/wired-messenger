@@ -212,9 +212,17 @@ def chats(request):
 @permission_classes([IsAuthenticated])
 def chat(request, chat_id):
     """
-    This function defined GET requests to the "chats/<int:chat_id>".
-    It returns serves a chat object in JSON for a given chat_id. 
+    This function defines GET requests to the "chats/<int:chat_id>" endpoint.
+    It serves a chat object in JSON for a given chat_id. 
     It filters the chat using both the request user and the chat_id as not to allow unauthorized users to access a chat.
+    If the chat does not exist or the user is unauthorized the endpoint returns a json dictionary of errors.
+    This function also defines PATCH requests to the endpoint.
+    It returns serves a updated chat object in JSON for a given chat_id. 
+    It filters the chat using both the request user and the chat_id as not to allow unauthorized users to update a chat.
+    If the chat does not exist or the user is unauthorized the endpoint returns a json dictionary of errors.
+    This function also defines DELETE requests to the endpoint.
+    It returns a confirmation of deletion in JSON for a given chat_id. 
+    It filters the chat using both the request user and the chat_id as not to allow unauthorized users to update a chat.
     If the chat does not exist or the user is unauthorized the endpoint returns a json dictionary of errors.
     """
     if request.method == 'GET':
@@ -228,10 +236,10 @@ def chat(request, chat_id):
             return Response({'chat_data':chat_serializer.data}, status=status.HTTP_200_OK)
         
         elif chat and not user_chat:
-            return Response({'errors':{'Authorization':('You are not authorized to view this object.', 'unauthorized')}}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'errors':{'Authorization':('You are not authorized to view this object.', 'unauthorized')}}, status=status.HTTP_401_UNAUTHORIZED)
 
         else:
-            return Response({'errors':{'Resource':('This chat does not exist.', 'does not exist')}}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'errors':{'Resource':('This chat does not exist.', 'does not exist')}}, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'PATCH':
 
@@ -277,7 +285,62 @@ def chat(request, chat_id):
             return Response({'message': f'The chat object {chat_display_name} has been deleted.'}, status=status.HTTP_200_OK)
         
         elif chat and not user_chat:
-            return Response({'errors':{'Authorization':('You are not authorized to delete this object.', 'unauthorized')}}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'errors':{'Authorization':('You are not authorized to delete this object.', 'unauthorized')}}, status=status.HTTP_401_UNAUTHORIZED)
 
         else:
-            return Response({'errors':{'Resource':('This chat does not exist.', 'does not exist')}}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'errors':{'Resource':('This chat does not exist.', 'does not exist')}}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET','POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def messages(request, chat_id):
+    """
+    This function defines GET requests to the "messages" endpoint.
+    """
+    if request.method == 'GET':
+        
+        chat = Chat.objects.filter(chat_id = chat_id).first()
+        user_chat = Chat.objects.filter(participants__model_user = request.user).filter(chat_id = chat_id).first()
+
+        if chat and user_chat:
+
+            message = Message.objects.filter(chat = user_chat).all()
+
+            message_serializer = MessageSerializer(message, many=True)
+                
+            return Response({'message_data': message_serializer.data}, status=status.HTTP_200_OK)
+        
+        elif chat and not user_chat:
+            return Response({'errors':{'Authorization':('You are not authorized to view these objects.', 'unauthorized')}}, status=status.HTTP_401_UNAUTHORIZED)
+
+        else:
+            return Response({'errors':{'Resource':('These messages do not exist.', 'does not exist')}}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'POST':
+
+        message = request.data.get('content')
+
+        create_message_serializer = CreateMessageSerializer(data=request.data)
+
+        if create_message_serializer.is_valid():
+
+            chat = Chat.objects.filter(chat_id = chat_id).first()
+            user_chat = Chat.objects.filter(participants__model_user = request.user).filter(chat_id = chat_id).first()
+
+            if chat and user_chat:
+                
+                message = Message.objects.create(content = message, chat=user_chat, sender = request.user)
+
+                message_serializer = MessageSerializer(message)
+
+                return Response({'message_data': message_serializer.data}, status=status.HTTP_200_OK)
+            
+            elif chat and not user_chat:
+
+                return Response({'errors': {'Authorization':('You are not authorized add messages to this chat.', 'unauthorized')}}, status=status.HTTP_401_UNAUTHORIZED)
+
+            else:
+                return Response({'errors': {'Resource':('You cannot add a message to a chat that does not exist.', 'does not exist')}}, status=status.HTTP_404_NOT_FOUND)
+
+        else:
+            return Response({'errors': create_message_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

@@ -97,3 +97,30 @@ class UpdateChatSerializer(serializers.ModelSerializer):
         fields = [   
             'display_name',
         ]
+
+class MessageSerializer(serializers.ModelSerializer):
+    """
+    This class serializes the selected fields of the message model into a python dictionary.
+    It also validats fields passed to it.
+    """
+    class Meta:
+        model = Message
+        fields = [
+            'message_id',
+            'sender', 
+            'content',
+            'chat',
+            'date_created'
+        ]
+
+
+class CreateMessageSerializer(serializers.ModelSerializer):
+    """
+    This class serializes the selected fields of the message model into a python dictionary.
+    It also validats fields passed to it.
+    """
+    class Meta:
+        model = Message
+        fields = [
+            'content',
+        ]

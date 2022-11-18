@@ -39,7 +39,6 @@ def index_view(request):
     if request.method == 'DELETE':
 
         chat_id = request.headers.get('Chat-Id')
-        print(chat_id)
 
         chat_uri = f'{request.scheme}://{request.get_host()}/api/chats/{chat_id}' 
 
@@ -97,6 +96,26 @@ def index_view(request):
             for value in chat_post_dict['errors'].values():
                 
                 return JsonResponse({'error': '*' + str(value[0])}, status=400)
+    
+    elif request.method == 'POST' and request.headers.get('Index-Page-Form') == 'message-form':
+         
+        chat_id = request.headers.get('Chat-Id')
+        messages_uri = f'{request.scheme}://{request.get_host()}/api/messages/{chat_id}'
+
+        message_text = request.POST.get('message_text')
+
+        request_dict = {
+            'content': message_text,
+        }
+        
+        messages_post_responce = requests.post(messages_uri, json=request_dict, headers=headers)
+        messages_post_dict = json.loads(messages_post_responce.content)
+   
+        if messages_post_responce.status_code == 400:
+            
+            for value in messages_post_dict['errors'].values():
+                
+                return JsonResponse({'error': '*' + str(value[0])}, status=400)
 
     if request.method == 'GET' and request.headers.get('Partial-Template') == 'profile-side-area':
 
@@ -117,8 +136,14 @@ def index_view(request):
         
         chat_get_responce = requests.get(chat_uri, headers=headers)
         chat_get_dict = json.loads(chat_get_responce.content)
+            
+        messages_uri = f'{request.scheme}://{request.get_host()}/api/messages/{chat_id}'
+        
+        messages_get_responce = requests.get(messages_uri, headers=headers)
+        messages_get_dict = json.loads(messages_get_responce.content)
 
         context['chat'] = chat_get_dict['chat_data']
+        context['chat_messages'] = messages_get_dict['message_data']
         
         return render(request, "chat-window.html", context)
     

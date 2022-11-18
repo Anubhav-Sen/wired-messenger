@@ -8,4 +8,5 @@ urlpatterns = [
     path('authenticate-user', views.authenticate_user, name='authenticate-user'),
     path('chats', views.chats, name='chats'),
     path('chats/<int:chat_id>', views.chat, name='chat'),
+    path('messages/<int:chat_id>', views.messages, name='messages'),
 ]

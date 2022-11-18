@@ -9,14 +9,14 @@ def login_required(login_url=None):
         def wrapper(request, *args, **kwargs):
 
             token_key = request.session.get('token_key')  
+            user_data = request.session.get('user_data')  
 
-            if not token_key:
-
-                return HttpResponseRedirect(login_url)
-
-            else:
+            if (token_key and user_data):
 
                 return function(request, *args, **kwargs)
+            
+            else:
+                return HttpResponseRedirect(login_url)
 
         return wrapper
     
