@@ -98,7 +98,6 @@ def index_view(request):
                 
                 return JsonResponse({'error': '*' + str(value[0])}, status=400)
 
-
     if request.method == 'GET' and request.headers.get('Partial-Template') == 'profile-side-area':
 
         return render(request, "profile.html", context)

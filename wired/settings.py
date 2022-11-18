@@ -30,6 +30,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -71,6 +73,8 @@ TEMPLATES = [
 ]
 
 AUTH_USER_MODEL = 'wiredAPI.User'
+
+ASGI_APPLICATION = "wired.asgi.application"
 
 WSGI_APPLICATION = 'wired.wsgi.application'
 

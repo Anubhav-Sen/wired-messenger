@@ -36,7 +36,26 @@
 
 <div id="chat-area">
 
-    <div>
+    <div id="message-log">
+
+        <div id="message">
+
+            <div class="display-pic-placeholder"><span>{{participant.model_user.user_name.0 | upper}}</span></div>
+            
+            <div id="message-content">
+
+                <div id="message-header">
+    
+                    <span id="username">Username</span>        
+                    <span id="message-datetime">Nov 1, 00:00PM</span>
+
+                </div>
+
+                <span id="message-text">message text</span>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -47,7 +66,7 @@
             {% csrf_token %}
             {{ message_form }}
 
-            <button class="round-btn"><i class="send-icon"></i></button>
+            <button class="round-btn" id="message-form-send-btn" data-chat-id="{{chat.chat_id}}"><i class="send-icon"></i></button>
 
         </form>
 

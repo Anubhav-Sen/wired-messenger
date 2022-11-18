@@ -53,5 +53,5 @@ class MessageForm(forms.Form):
     """
     This class defines all of the fields of the message form.
     """
-    message_text = forms.CharField(label='', required=False, widget=forms.Textarea(attrs={'placeholder': 'Text message', 'id':'message_text_input', 'rows': 1, 'cols': None}))
+    message_text = forms.CharField(label='', required=False, widget=forms.Textarea(attrs={'placeholder': 'Text message', 'id':'message-text-input', 'rows': 1, 'cols': None}))
 

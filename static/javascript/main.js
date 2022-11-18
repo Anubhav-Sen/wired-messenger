@@ -18,6 +18,8 @@ const croppedImageCancelBtn = document.getElementById('cropped-image-cancel-btn'
 const changePasswordBtn = document.getElementById('change-password-btn');
 const changePasswordFieldsContainer = document.getElementById('change-password-fields-container');
 
+var openSocket = null;
+
 addEventListenerIfElementExists(createChatBtn, 'click', function() {switchToCreateChatSideArea(sideAreaHeader, chatListSideArea);});
 addEventListenerIfElementExists(profileBtn, 'click', function () {switchToProfileSideArea(sideAreaHeader, chatListSideArea);});
 addEventListenerIfElementExists(editProfileBtn, 'click', function() {redirectFromOrigin('/edit-profile')});
@@ -344,7 +346,7 @@ function submitCreateChatForm(event) {
 function resizeMessageTextArea() {
 
     //This function resizes message text area to fit the text inside.
-    
+
     this.rows = 1;
     this.rows = Math.floor((this.scrollHeight - 32) / 16);
 };
@@ -371,6 +373,7 @@ function switchChatWindow() {
     //It sets an event listener on the chat window profile button to call the switchToChatParticipantProfileSideArea function.
     //It sets an event listener on the chat window edit chat button to call the switchToEditChatSideArea function.
     //It sets an event listener on the message text input to call the resizeMessageTextArea function.
+    //It closes a existing socket and opens a new web socket.
     
     xhr.open('GET', window.location.href);
     xhr.responseType = 'document';
@@ -481,7 +484,13 @@ function switchChatWindow() {
             addEventListenerToActionsButton(chatWindowActionsButton);
             chatWindowBackBtn.addEventListener('click', switchToChatWindowClosed);
             messageTextInput.addEventListener('input', resizeMessageTextArea);
+              
+            if (openSocket) {
 
+                openSocket.close();     
+            };
+
+            chatSocket();
         };
     };  
 };
@@ -491,6 +500,7 @@ function switchToChatWindowClosed() {
     //This function switches the chat area to its default closed state.
     //It sends a get request to the index route of the application with a custom header.
     //It recieves the rendered html fragment for the chat area from the backend and replaces the current chat area with it.
+    //It closes the open socket.
 
     xhr.open('GET', window.location.href);
     xhr.responseType = 'document';
@@ -508,6 +518,12 @@ function switchToChatWindowClosed() {
 
             chatAreaHeader.parentNode.replaceChild(newChatAreaHeader, chatAreaHeader);
             chatArea.parentNode.replaceChild(newChatArea, chatArea); 
+
+                  
+            if (openSocket) {
+
+                openSocket.close();     
+            };
         };
     };
 };
@@ -656,4 +672,47 @@ function deleteChat(element) {
             switchToChatListSideArea(sideAreaHeader, chatListSideArea, switchToChatWindowClosed);               
         };
     };
+};
+
+function chatSocket() {
+
+    let messageForm = document.getElementById('message-form');
+    let messageFormTextInput = document.getElementById('message-text-input');
+    let messageFormSendBtn = document.getElementById('message-form-send-btn');
+    let chatId = messageFormSendBtn.getAttribute('data-chat-Id');
+    let url = `ws://${window.location.host}/ws/chat/${chatId}`;
+
+    openSocket = new WebSocket(url);
+
+    openSocket.onmessage = function(event) {
+        let data = JSON.parse(event.data);
+        console.log(data.message)        
+    };
+
+    openSocket.onclose = function(event) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    messageFormSendBtn.addEventListener('click', function(event) {
+
+        event.preventDefault();
+
+        let message = messageFormTextInput.value;
+        let messageJSON = JSON.stringify({'message': message});
+        
+        messageForm.reset()
+        messageFormTextInput.focus();
+        messageFormTextInput.rows = 1;
+
+        openSocket.send(messageJSON);
+    });
+
+    messageFormTextInput.addEventListener('keypress', function(event) {
+
+        if (event.key == 'Enter') {
+            
+            event.preventDefault();
+            messageFormSendBtn.click();
+        };
+    });
 };
